@@ -1,0 +1,75 @@
+{
+  "FullName": "Bingo game test",
+  "ShortName": "bingogametest",
+  "LastUpdated": "2018-07-01 13:14",
+  "Skip": "false",
+  "ProgramToLaunch": "",
+  "Steps": [
+    {
+      "Target": "image",
+      "Search": ".\\images\\WindowsLogo.jpg",
+      "ScreenArea": "top-right",
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": "",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "bingo",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": "",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "{ENTER}",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "image",
+      "Search": ".\\images\\bingo-guest.jpg",
+      "ScreenArea": "right",
+      "Action": "mouse.click",
+      "Waiting": "5",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "image",
+      "Search": ".\\images\\bingo-erroricon.jpg",
+      "ScreenArea": "right",
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "false"
+    },
+    {
+      "Target": "image",
+      "Search": ".\\images\\bingo-super.jpg",
+      "ScreenArea": "down",
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "image",
+      "Search": ".\\images\\bingo-world.jpg",
+      "ScreenArea": "down",
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "image",
+      "Search": ".\\images\\bingo-tour.jpg",
+      "ScreenArea": "down",
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "true"
+    }
+  ]
+}
