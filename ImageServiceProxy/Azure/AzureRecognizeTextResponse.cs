@@ -1,23 +1,23 @@
 ﻿using CommonContracts;
 
-namespace ImageServiceProxy
+namespace ImageServiceProxy.Azure
 {
-    public class AzureRecognizeTextResponse : IAzureRecognizeTextResponse
+    internal class AzureRecognizeTextResponse : IAzureRecognizeTextResponse
     {
         public string Status { get; set; }
-        public IRecognizeResult RecognitionResult { get; set; }
+        public IAzureRecognizeResult RecognitionResult { get; set; }
     }
 
-    public class RecognitionResult : IRecognizeResult
+    internal class RecognitionResult : IAzureRecognizeResult
     {
-        public ILine[] Lines { get; set; }
+        public IAzureLine[] Lines { get; set; }
     }
 
-    public class Line : ILine
+    internal class Line : IAzureLine
     {
         public int[] BoundingBox { get; set; }
         public string Text { get; set; }
-        public IWord[] Words { get; set; }
+        public IAzureWord[] Words { get; set; }
 
         public IScreenLocation GetCentralLocation()
         {
@@ -25,7 +25,7 @@ namespace ImageServiceProxy
         }
     }
 
-    public class Word : IWord
+    internal class Word : IAzureWord
     {
         public int[] BoundingBox { get; set; }
         public string Text { get; set; }

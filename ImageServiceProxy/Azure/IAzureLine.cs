@@ -1,10 +1,12 @@
-﻿namespace CommonContracts
+﻿using CommonContracts;
+
+namespace ImageServiceProxy.Azure
 {
-    // TODO: should have a better name
-    public interface IWord
+    internal interface IAzureLine
     {
         int[] BoundingBox { get; set; }
         string Text { get; set; }
+        IAzureWord[] Words { get; set; }
         IScreenLocation GetCentralLocation();
     }
 }

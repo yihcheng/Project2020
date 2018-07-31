@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using CommonContracts;
@@ -7,14 +8,14 @@ namespace Engine
 {
     internal class TestStepForImage : ITestStepExecutor
     {
-        private readonly IImageService _service;
+        private readonly IReadOnlyList<IImageService> _services;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
         private readonly string _targetKeyword = "image";
 
-        public TestStepForImage(IImageService imageService, IComputer computer, ITestStep action)
+        public TestStepForImage(IReadOnlyList<IImageService> services, IComputer computer, ITestStep action)
         {
-            _service = imageService;
+            _services = services;
             _computer = computer;
             _step = action;
         }
@@ -30,34 +31,51 @@ namespace Engine
 
             if (!File.Exists(_step.Search))
             {
+                // TODO : log?
                 Console.WriteLine($"{_step.Search} is not found");
                 return false;
             }
 
             string fullScreenFile = $".\\ScreenShotTemplate\\template-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
+            // TODO
             FileUtility.CreateParentFolder(fullScreenFile);
             _computer.Screen.SaveFullScreenAsFile(fullScreenFile);
-            ITemplateMatchResult templateMatchResult = await _service.TemplateMatch(_step.Search, fullScreenFile).ConfigureAwait(false);
 
-            // reject small confidence and non-okay status
-            if (templateMatchResult.Confidence < 0.9
-                || !string.Equals(templateMatchResult.Message, "ok", StringComparison.OrdinalIgnoreCase))
+            byte[] searchFileBytes = File.ReadAllBytes(_step.Search);
+            byte[] fullScreenFileBytes = File.ReadAllBytes(fullScreenFile);
+            (double confidence, int X, int Y)? result = null;
+
+            if (_services?.Count > 0)
+            {
+                // TemplateMatch is identical in every image service
+                result = _services[0].TemplateMatch(searchFileBytes, fullScreenFileBytes);
+            }
+
+            // reject small confidence
+            if (result == null)
             {
                 // TODO : log?
-                Console.WriteLine($"confidence is less 0.9 (actual:{templateMatchResult.Confidence}) or returned message is not okay (actual:{templateMatchResult.Message})");
+                Console.WriteLine($"templateMatchResult is null");
+                return false;
+            }
+
+            if (result.Value.confidence < 0.9)
+            {
+                // TODO : log?
+                Console.WriteLine($"templateMatchResult confidence is less 0.9 (actual:{result.Value.confidence})");
                 return false;
             }
 
             // check screen area
-            if (!_computer.Screen.IsSearchAreaMatch(_step.SearchArea, (templateMatchResult.X, templateMatchResult.Y)))
+            if (!_computer.Screen.IsSearchAreaMatch(_step.SearchArea, (result.Value.X, result.Value.Y)))
             {
                 // TODO : log?
-                Console.WriteLine("target is not found in selected search area");
+                Console.WriteLine("Target is not found in selected search area");
                 return false;
             }
 
             //TODO: log?
-            Console.WriteLine($"target is found at locaiton ({templateMatchResult.X},{templateMatchResult.Y})");
+            Console.WriteLine($"Target is found at locaiton ({result.Value.X},{result.Value.Y})");
 
             // run action if exists
             if (!string.IsNullOrEmpty(_step.Action))
@@ -65,7 +83,7 @@ namespace Engine
                 ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(_computer,
                                                                                           _step.Action,
                                                                                           _step.ActionArgument,
-                                                                                          (templateMatchResult.X, templateMatchResult.Y));
+                                                                                          (result.Value.X, result.Value.Y));
 
                 actionExecutor?.Execute();
             }
@@ -73,6 +91,7 @@ namespace Engine
             // wait if exists
             if (_step.WaitingSecond > 0)
             {
+                // TODO: log?
                 Console.WriteLine($"TestStepForImage waits for {_step.WaitingSecond} seconds");
                 await Task.Delay(_step.WaitingSecond * 1000).ConfigureAwait(false);
             }

@@ -1,0 +1,26 @@
+﻿{
+  "FullName": "Bingo game test",
+  "ShortName": "bingogametest",
+  "LastUpdated": "2018-07-01 13:14",
+  "Skip": "false",
+  "ProgramToLaunch": "",
+  "Steps": [
+    {
+      "Target": "image",
+      "Search": ".\\images\\WindowsLogo.jpg",
+      "ScreenArea": "top-right",
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": "",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "bingo",
+      "Waiting": "3",
+      "FailureReport": "true"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using CommonContracts;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using CommonContracts;
 
 namespace Engine
 {
@@ -10,15 +10,17 @@ namespace Engine
     {
         // TODO: should not hard-code it. It should go to config file.
         private const string _jsonFileFolder = @".\E2Efiles\";
-        private static ITestE2EReader _actionReader;
+        private static ITestE2EReader _testE2EReader;
         private static IComputer _computer;
-        private static IImageService _imageService;
+        private static IReadOnlyList<IImageService> _imageServices;
+        private static IEngineConfig _engineConfig;
 
-        public Engine(ITestE2EReader reader, IComputer computer, IImageService service)
+        public Engine(ITestE2EReader reader, IComputer computer, IReadOnlyList<IImageService> services, IEngineConfig config)
         {
-            _actionReader = reader;
+            _testE2EReader = reader;
             _computer = computer;
-            _imageService = service;
+            _imageServices = services;
+            _engineConfig = config;
         }
 
         public async Task RunAsync(string e2eFile = null)
@@ -36,7 +38,7 @@ namespace Engine
 
                 try
                 {
-                    ITestE2E teste2e = _actionReader.Parse(e2eFiles[i]);
+                    ITestE2E teste2e = _testE2EReader.Parse(e2eFiles[i]);
 
                     if (teste2e.Skip)
                     {
@@ -46,7 +48,7 @@ namespace Engine
                     // TODO : log?
                     Console.WriteLine($"Running E2E test - {teste2e.FullName}");
 
-                    TestE2EExecutor executor = new TestE2EExecutor(teste2e, _computer, _imageService);
+                    TestE2EExecutor executor = new TestE2EExecutor(teste2e, _computer, _imageServices);
                     bool result = await executor.ExecuteAsync().ConfigureAwait(false);
                     finalResult = finalResult && result;
 
@@ -74,10 +76,14 @@ namespace Engine
 
         private void DisplayFinalResult(bool finalResult)
         {
-            string result = finalResult ? "PASSED" : "Failed";
-            MessageBoxIcon icon = finalResult ? MessageBoxIcon.Information : MessageBoxIcon.Error;
-            // TODO: should make it top most
-            MessageBox.Show($"The final test result is {result}", "Test Result", MessageBoxButtons.OK, icon);
+            if (finalResult)
+            {
+                _computer.DisplayMessageBox("The final test result is PASS!");
+            }
+            else
+            {
+                _computer.DisplayMessageBox("The final test result is FAILED!");
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CommonContracts;
+﻿using System.Windows.Forms;
+using CommonContracts;
 
 namespace WindowsComputer
 {
@@ -16,5 +17,11 @@ namespace WindowsComputer
         public IKeyboard Keyboard { get; }
 
         public IMouse Mouse { get; }
+
+        public void DisplayMessageBox(string message)
+        {
+            // TODO: should make it top most
+            MessageBox.Show(message, "Test Result", MessageBoxButtons.OK);
+        }
     }
 }

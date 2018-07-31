@@ -1,0 +1,24 @@
+{
+  "OCRProvider": [
+    {
+      "Provider": "Azure",
+      "Endpoint": "https://xxxx.xxx.com",
+      "Key": "key12341234"
+    },
+    {
+      "Provider": "GCP",
+      "Endpoint": "https://xxxx.xxx.com",
+      "Key": "key12341234"
+    },
+    {
+      "Provider": "OCRSpace",
+      "Endpoint": "https://xxxx.xxx.com",
+      "Key": "key12341234"
+    }
+  ],
+  "TestJsonFileFolder": ".\\E2EFiles\\",
+  "LoggerType": "Console",
+  "ImageFolder": ".\\images\\",
+  "ScreenShotFolder": ".\\screenshot\\",
+  "OCRFailFolder": ".\\OCR-Fail\\"
+}

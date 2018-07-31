@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using CommonContracts;
@@ -8,14 +9,14 @@ namespace Engine
 {
     internal class TestStepForText2 : ITestStepExecutor
     {
-        private readonly IImageService _service;
+        private readonly IReadOnlyList<IImageService> _services;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
         private const string _targetKeyword = "text";
 
-        public TestStepForText2(IImageService service, IComputer computer, ITestStep step)
+        public TestStepForText2(IReadOnlyList<IImageService> services, IComputer computer, ITestStep step)
         {
-            _service = service;
+            _services = services;
             _computer = computer;
             _step = step;
         }
@@ -32,22 +33,30 @@ namespace Engine
             string filename = $".\\ScreenShotTemplate\\fullscreen-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
             FileUtility.CreateParentFolder(filename);
             _computer.Screen.SaveFullScreenAsFile(filename);
-            string jsonString = await _service.AzureRecognizeTextAsync(filename).ConfigureAwait(false);
-            bool isLine = _step.Search.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length > 1;
-            IAzureRecognizeTextFinder textFinder = new AzureRecognizeTextFinder(jsonString, _computer.Screen, isLine);
+            bool foundLocation = false;
+            IScreenLocation location = null;
 
-            if (!textFinder.TrySearchText(_step.Search, _step.SearchArea, out IScreenLocation location))
+            for (int i = 0; i < _services.Count; i++)
             {
-                string ocrFailFileName = $"ACRfail{DateTime.Now.ToString("yyyyMMddHHmmss")}-{_step.Search}.txt";
-                string ocrFailFilePath = $".\\OCRfail\\{ocrFailFileName}";
-                FileUtility.CreateParentFolder(ocrFailFilePath);
-                File.WriteAllText(ocrFailFilePath, jsonString);
-                // TODO: log?
-                Console.WriteLine($"AzureOCR didn't find text - {_step.Search}. {ocrFailFileName} is saved");
-                return false;
+                location = await _services[i].GetOCRResultAsync(filename, _step.Search, _step.SearchArea).ConfigureAwait(false);
+
+                if (location != null)
+                {
+                    foundLocation = true;
+                    break;
+                }
             }
 
-            Console.WriteLine($"{_step.Search} is found at location ({location.X}, {location.Y})");
+            if (foundLocation)
+            {
+                // TODO : log ?
+                Console.WriteLine($"{_step.Search} is found at location ({location.X}, {location.Y})");
+            }
+            else
+            {
+                // TODO : log ?
+                return false;
+            }
 
             // run action if exists
             if (!string.IsNullOrEmpty(_step.Action))

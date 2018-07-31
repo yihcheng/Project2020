@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,10 +11,10 @@ namespace Engine
     {
         private readonly ITestE2E _testE2E;
         private readonly IComputer _computer;
-        private readonly IImageService _imageService;
+        private readonly IReadOnlyList<IImageService> _imageService;
         private Process _targetProcess;
 
-        public TestE2EExecutor(ITestE2E testE2E, IComputer computer, IImageService imageService)
+        public TestE2EExecutor(ITestE2E testE2E, IComputer computer, IReadOnlyList<IImageService> imageService)
         {
             _testE2E = testE2E;
             _computer = computer;
