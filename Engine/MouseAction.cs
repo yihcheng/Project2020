@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using CommonContracts;
+using Abstractions;
 
 namespace Engine
 {
@@ -9,12 +9,14 @@ namespace Engine
         private readonly IMouse _mouse;
         private readonly string _action;
         private readonly (int X, int Y) _location;
+        private readonly ILogger _logger;
 
-        public MouseAction(IMouse mouse, string action, (int X, int Y) location)
+        public MouseAction(IMouse mouse, string action, (int X, int Y) location, ILogger logger)
         {
             _mouse = mouse;
             _action = action;
             _location = location;
+            _logger = logger;
         }
 
         public void Execute()
@@ -23,12 +25,11 @@ namespace Engine
 
             if (actionData.Length != 2)
             {
-                // TODO: log?
-                Console.WriteLine("Action is not in a good format");
+                _logger.WriteError("Action is not in a good format");
                 return;
             }
 
-            Console.WriteLine($"Mouse command = {actionData[1]} in location ({_location.X},{_location.Y})");
+            _logger.WriteInfo($"Mouse command = {actionData[1]} in location ({_location.X},{_location.Y})");
             DoMouseAction(actionData[1], _location);
         }
 

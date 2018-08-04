@@ -13,8 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
     <ProjectReference Include="..\ImageServiceProxy\ImageServiceProxy.csproj" />
-    <ProjectReference Include="..\TestActionProducer\TestActionProducer.csproj" />
+    <ProjectReference Include="..\TestInputDataReader\TestInputDataReader.csproj" />
     <ProjectReference Include="..\WindowsComputer\WindowsComputer.csproj" />
   </ItemGroup>
 

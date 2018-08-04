@@ -2,18 +2,8 @@
   "OCRProvider": [
     {
       "Provider": "Azure",
-      "Endpoint": "https://xxxx.xxx.com",
-      "Key": "key12341234"
-    },
-    {
-      "Provider": "GCP",
-      "Endpoint": "https://xxxx.xxx.com",
-      "Key": "key12341234"
-    },
-    {
-      "Provider": "OCRSpace",
-      "Endpoint": "https://xxxx.xxx.com",
-      "Key": "key12341234"
+      "Endpoint": "https://westus.api.cognitive.microsoft.com/vision/v2.0/recognizeText?mode=Printed",
+      "Key": "xxxxxxx"
     }
   ],
   "TestJsonFileFolder": ".\\E2EFiles\\",

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CommonContracts;
+using Abstractions;
 using Newtonsoft.Json.Linq;
 
 namespace ImageServiceProxy.Azure

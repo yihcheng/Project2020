@@ -8,8 +8,8 @@
     <ProjectGuid>{28DF8B92-5146-4238-97B3-51C240E3AB10}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestActionProducer</RootNamespace>
-    <AssemblyName>TestActionProducer</AssemblyName>
+    <RootNamespace>TestInputDataReader</RootNamespace>
+    <AssemblyName>TestInputDataReader</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -54,14 +54,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestAction.cs" />
-    <Compile Include="TestActionReader.cs" />
+    <Compile Include="TestStep.cs" />
+    <Compile Include="TestE2EReader.cs" />
     <Compile Include="TestE2E.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonContracts\CommonContracts.csproj">
+    <ProjectReference Include="..\Abstractions\Abstractions.csproj">
       <Project>{6a45f08c-8c4b-4076-9331-48ed83ad00d7}</Project>
-      <Name>CommonContracts</Name>
+      <Name>Abstractions</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

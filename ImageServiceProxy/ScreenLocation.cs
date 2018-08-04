@@ -1,4 +1,4 @@
-﻿using CommonContracts;
+﻿using Abstractions;
 
 namespace ImageServiceProxy
 {

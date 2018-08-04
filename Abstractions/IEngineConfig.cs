@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CommonContracts
+namespace Abstractions
 {
     public interface IEngineConfig
     {

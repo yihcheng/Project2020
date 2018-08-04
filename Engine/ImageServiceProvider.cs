@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using CommonContracts;
+using Abstractions;
 using ImageServiceProxy;
-using ImageServiceProxy.Azure;
 
 namespace Engine
 {
     internal static class ImageServiceProvider
     {
-        public static IReadOnlyList<IImageService> GetImageServices(IComputer computer, IEngineConfig config)
+        public static IReadOnlyList<IImageService> GetImageServices(IComputer computer, IEngineConfig config, ILogger logger)
         {
             IReadOnlyList<IOCRProviderConfig> ocrProviders = config.GetOCRProviders();
 
@@ -20,7 +19,7 @@ namespace Engine
 
             foreach (IOCRProviderConfig providerConfig in ocrProviders)
             {
-                IImageService service = ImageServiceFactory.Create(providerConfig.Provider, providerConfig.Endpoint, providerConfig.Key, computer);
+                IImageService service = ImageServiceFactory.Create(providerConfig.Provider, providerConfig.Endpoint, providerConfig.Key, computer, logger);
 
                 if (service != null)
                 {

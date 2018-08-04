@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using CommonContracts;
-using ImageServiceProxy;
+using Abstractions;
 
 namespace Engine
 {
-    internal class TestStepForText2 : ITestStepExecutor
+    internal class TestStepForText : ITestStepExecutor
     {
         private readonly IReadOnlyList<IImageService> _services;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
+        private readonly ILogger _logger;
         private const string _targetKeyword = "text";
 
-        public TestStepForText2(IReadOnlyList<IImageService> services, IComputer computer, ITestStep step)
+        public TestStepForText(IReadOnlyList<IImageService> services, IComputer computer, ITestStep step, ILogger logger)
         {
             _services = services;
             _computer = computer;
             _step = step;
+            _logger = logger;
         }
 
         public async Task<bool> ExecuteAsync()
@@ -49,12 +49,11 @@ namespace Engine
 
             if (foundLocation)
             {
-                // TODO : log ?
-                Console.WriteLine($"{_step.Search} is found at location ({location.X}, {location.Y})");
+                _logger.WriteInfo($"Text ({_step.Search}) is found at location ({location.X}, {location.Y})");
             }
             else
             {
-                // TODO : log ?
+                _logger.WriteError($"Text ({_step.Search}) is NOT found.");
                 return false;
             }
 
@@ -64,7 +63,8 @@ namespace Engine
                 ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(_computer,
                                                                                           _step.Action,
                                                                                           _step.ActionArgument,
-                                                                                          (location.X, location.Y));
+                                                                                          (location.X, location.Y),
+                                                                                          _logger);
 
                 actionExecutor?.Execute();
             }
@@ -72,8 +72,7 @@ namespace Engine
             // wait if exists
             if (_step.WaitingSecond > 0)
             {
-                // TODO : log ?
-                Console.WriteLine($"TestStepForText2 waits for {_step.WaitingSecond} seconds");
+                _logger.WriteInfo($"TestStepForText2 waits for {_step.WaitingSecond} seconds");
                 await Task.Delay(_step.WaitingSecond * 1000).ConfigureAwait(false);
             }
 

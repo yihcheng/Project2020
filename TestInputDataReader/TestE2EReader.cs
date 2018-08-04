@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using CommonContracts;
+using Abstractions;
 using Newtonsoft.Json.Linq;
 
-namespace TestActionProducer
+namespace TestInputDataReader
 {
-    public class TestActionReader : ITestE2EReader
+    public class TestE2EReader : ITestE2EReader
     {
-        public ITestE2E Parse(string file)
+        private readonly ILogger _logger;
+
+        public TestE2EReader(ILogger logger)
+        {
+            _logger = logger;
+        }
+
+        public ITestE2E ReadFile(string file)
         {
             ITestE2E e2e = null;
 
@@ -17,9 +24,10 @@ namespace TestActionProducer
                 string fileContent = File.ReadAllText(file);
                 JObject jObj = JObject.Parse(fileContent);
 
-                // actions
+                // TODO : parse should fail if some major element is missing
+
                 JArray jSteps = (JArray)jObj["Steps"];
-                IList<ITestStep> steps = ParseSteps(jSteps);
+                IReadOnlyList<ITestStep> steps = ParseTestSteps(jSteps);
 
                 e2e = new TestE2E()
                 {
@@ -32,22 +40,19 @@ namespace TestActionProducer
             }
             catch (Exception ex)
             {
-                // parse error
-                // TODO : log ?
-                Console.WriteLine("Parse error = " + ex);
-                return null;
+                _logger.WriteError($"E2E file ({file}) has error on parsing! " + ex);
             }
 
             return e2e;
         }
 
-        private IList<ITestStep> ParseSteps(JArray jActions)
+        private IReadOnlyList<ITestStep> ParseTestSteps(JArray jActions)
         {
             List<ITestStep> actions = new List<ITestStep>();
 
             for (int actionId = 0; actionId < jActions.Count; actionId++)
             {
-                TestAction action = new TestAction
+                TestStep action = new TestStep
                 {
                     Target = (string)jActions[actionId]["Target"],
                     Search = (string)jActions[actionId]["Search"],

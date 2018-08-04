@@ -5,15 +5,15 @@ VisualStudioVersion = 15.0.27205.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{9D180DF0-B5E9-4BEC-A196-A3EDCC4E64EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestActionProducer", "TestActionProducer\TestActionProducer.csproj", "{28DF8B92-5146-4238-97B3-51C240E3AB10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestInputDataReader", "TestInputDataReader\TestInputDataReader.csproj", "{28DF8B92-5146-4238-97B3-51C240E3AB10}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageServiceProxy", "ImageServiceProxy\ImageServiceProxy.csproj", "{4C420C00-4CFB-481A-8A83-10FA442B489C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonContracts", "CommonContracts\CommonContracts.csproj", "{6A45F08C-8C4B-4076-9331-48ED83AD00D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "Abstractions\Abstractions.csproj", "{6A45F08C-8C4B-4076-9331-48ED83AD00D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsComputer", "WindowsComputer\WindowsComputer.csproj", "{B3E3843F-25AE-45F0-A4A6-D7AEF20012C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{395C79A9-0D79-4F26-934F-5BE18B5E0257}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{395C79A9-0D79-4F26-934F-5BE18B5E0257}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E7FB2B42-178F-46C2-A3CE-8CCEF836EDA9}"
 EndProject

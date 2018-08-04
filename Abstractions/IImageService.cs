@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace CommonContracts
+namespace Abstractions
 {
     public interface IImageService
     {

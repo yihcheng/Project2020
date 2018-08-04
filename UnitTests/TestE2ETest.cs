@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
-using TestActionProducer;
-using CommonContracts;
 using System.IO;
+using Abstractions;
+using Moq;
+using TestInputDataReader;
+using Xunit;
 
 namespace UnitTests
 {
@@ -16,11 +15,19 @@ namespace UnitTests
         public void ParseTest(string e2eFile, string expectedShortName, bool expectedSkip)
         {
             string file = Path.Combine(Environment.CurrentDirectory, e2eFile);
-            TestActionReader reader = new TestActionReader();
-            ITestE2E e2e = reader.Parse(file);
+            TestE2EReader reader = new TestE2EReader(CreateLoggerMock().Object);
+            ITestE2E e2e = reader.ReadFile(file);
 
             Assert.Equal(expectedShortName, e2e.ShortName);
             Assert.Equal(expectedSkip, e2e.Skip);
+        }
+
+        private Mock<ILogger> CreateLoggerMock()
+        {
+            Mock<ILogger> loggerMock = new Mock<ILogger>();
+            loggerMock.Setup(m => m.WriteInfo(It.IsAny<string>()));
+
+            return loggerMock;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CommonContracts;
+using Abstractions;
 using Moq;
 using WindowsComputer;
 using Xunit;

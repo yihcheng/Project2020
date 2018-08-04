@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using CommonContracts;
+using Abstractions;
 
 namespace Engine
 {
@@ -11,13 +11,15 @@ namespace Engine
         private readonly IReadOnlyList<IImageService> _services;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
+        private readonly ILogger _logger;
         private readonly string _targetKeyword = "image";
 
-        public TestStepForImage(IReadOnlyList<IImageService> services, IComputer computer, ITestStep action)
+        public TestStepForImage(IReadOnlyList<IImageService> services, IComputer computer, ITestStep action, ILogger logger)
         {
             _services = services;
             _computer = computer;
             _step = action;
+            _logger = logger;
         }
 
         public async Task<bool> ExecuteAsync()
@@ -31,13 +33,11 @@ namespace Engine
 
             if (!File.Exists(_step.Search))
             {
-                // TODO : log?
-                Console.WriteLine($"{_step.Search} is not found");
+                _logger.WriteError($"{_step.Search} is not found");
                 return false;
             }
 
             string fullScreenFile = $".\\ScreenShotTemplate\\template-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
-            // TODO
             FileUtility.CreateParentFolder(fullScreenFile);
             _computer.Screen.SaveFullScreenAsFile(fullScreenFile);
 
@@ -54,28 +54,24 @@ namespace Engine
             // reject small confidence
             if (result == null)
             {
-                // TODO : log?
-                Console.WriteLine($"templateMatchResult is null");
+                _logger.WriteError($"templateMatchResult is null");
                 return false;
             }
 
             if (result.Value.confidence < 0.9)
             {
-                // TODO : log?
-                Console.WriteLine($"templateMatchResult confidence is less 0.9 (actual:{result.Value.confidence})");
+                _logger.WriteError($"templateMatchResult confidence is less 0.9 (actual:{result.Value.confidence})");
                 return false;
             }
 
             // check screen area
             if (!_computer.Screen.IsSearchAreaMatch(_step.SearchArea, (result.Value.X, result.Value.Y)))
             {
-                // TODO : log?
-                Console.WriteLine("Target is not found in selected search area");
+                _logger.WriteError("Target is not found in selected search area");
                 return false;
             }
 
-            //TODO: log?
-            Console.WriteLine($"Target is found at locaiton ({result.Value.X},{result.Value.Y})");
+            _logger.WriteInfo($"Target is found at locaiton ({result.Value.X},{result.Value.Y})");
 
             // run action if exists
             if (!string.IsNullOrEmpty(_step.Action))
@@ -83,7 +79,8 @@ namespace Engine
                 ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(_computer,
                                                                                           _step.Action,
                                                                                           _step.ActionArgument,
-                                                                                          (result.Value.X, result.Value.Y));
+                                                                                          (result.Value.X, result.Value.Y),
+                                                                                          _logger);
 
                 actionExecutor?.Execute();
             }
@@ -91,8 +88,7 @@ namespace Engine
             // wait if exists
             if (_step.WaitingSecond > 0)
             {
-                // TODO: log?
-                Console.WriteLine($"TestStepForImage waits for {_step.WaitingSecond} seconds");
+                _logger.WriteInfo($"TestStepForImage waits for {_step.WaitingSecond} seconds");
                 await Task.Delay(_step.WaitingSecond * 1000).ConfigureAwait(false);
             }
 

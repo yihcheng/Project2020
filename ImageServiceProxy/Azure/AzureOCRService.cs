@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using CommonContracts;
+using Abstractions;
 using ImageServiceProxy.Utils;
 using Newtonsoft.Json.Linq;
 
@@ -21,14 +21,21 @@ namespace ImageServiceProxy.Azure
         private readonly IComputer _computer;
         private readonly IOCRResultTextFinder _textFinder;
         private readonly IOpenCVService _opencvService;
+        private readonly ILogger _logger;
 
-        public AzureOCRService(IComputer computer, IOCRResultTextFinder textFinder, IOpenCVService opencvService, string serviceUrl, string serviceKey)
+        public AzureOCRService(IComputer computer,
+                               IOCRResultTextFinder textFinder,
+                               IOpenCVService opencvService,
+                               string serviceUrl,
+                               string serviceKey,
+                               ILogger logger)
         {
             _computer = computer;
             _textFinder = textFinder;
             _opencvService = opencvService;
             _azureOCRUrl = serviceUrl;
             _azureOCRKey = serviceKey;
+            _logger = logger;
         }
 
         public string ProviderName => _providerName;
@@ -97,8 +104,7 @@ namespace ImageServiceProxy.Azure
             }
             catch (Exception ex)
             {
-                // TODO: log?
-
+                _logger.WriteError("AzureOCRService GetOCRJsonResultAsync() error = " + ex);
             }
             finally
             {
@@ -112,17 +118,24 @@ namespace ImageServiceProxy.Azure
         {
             if (string.IsNullOrEmpty(imageFile) || string.IsNullOrEmpty(textToSearch))
             {
-                // TODO : log?
+                _logger.WriteError("Image file or search text is empty!");
                 return null;
             }
 
             if (!File.Exists(imageFile))
             {
-                // TODO : log?
+                _logger.WriteError("Image file does not exist in file system!");
                 return null;
             }
 
             string jsonResult = await GetOCRJsonResultAsync(imageFile).ConfigureAwait(false);
+
+            if (string.IsNullOrEmpty(jsonResult))
+            {
+                _logger.WriteError("Json result is empty from OCR service. OCR got failure!");
+                return null;
+            }
+
             bool isLine = textToSearch.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length > 1;
 
             if (_textFinder.TrySearchText(textToSearch, jsonResult, _computer.Screen, searchArea, out IScreenLocation location))
@@ -132,12 +145,11 @@ namespace ImageServiceProxy.Azure
 
             try
             {
-                // TODO : log fail to find.
                 string ocrFailFileName = $"OCRfail{DateTime.Now.ToString("yyyyMMddHHmmss")}-{textToSearch}.txt";
-                // TODO : folder from config ?
                 string ocrFailFilePath = $".\\OCRfail\\{_providerName}-{ocrFailFileName}";
                 FileUtility.CreateParentFolder(ocrFailFilePath);
                 File.WriteAllText(ocrFailFilePath, jsonResult);
+                _logger.WriteError($"Cannot find text ({textToSearch}) in json result at {searchArea}. json is saved in {ocrFailFileName}");
             }
             catch
             { }
@@ -147,8 +159,6 @@ namespace ImageServiceProxy.Azure
 
         public (double, int, int)? TemplateMatch(byte[] search, byte[] template)
         {
-            // TODO : log ?
-
             return _opencvService.TemplateMatch(search, template);
         }
     }

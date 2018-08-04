@@ -1,6 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using CommonContracts;
+﻿using System.Threading.Tasks;
+using Abstractions;
 
 namespace Engine
 {
@@ -8,11 +7,13 @@ namespace Engine
     {
         private readonly IComputer _computer;
         private readonly ITestStep _step;
+        private readonly ILogger _logger;
 
-        public TestStepForActionOnly(IComputer computer, ITestStep step)
+        public TestStepForActionOnly(IComputer computer, ITestStep step, ILogger logger)
         {
             _computer = computer;
             _step = step;
+            _logger = logger;
         }
 
         public async Task<bool> ExecuteAsync()
@@ -23,7 +24,8 @@ namespace Engine
                 ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(_computer,
                                                                                           _step.Action,
                                                                                           _step.ActionArgument,
-                                                                                          (-1, -1));
+                                                                                          (-1, -1),
+                                                                                          _logger);
 
                 actionExecutor?.Execute();
             }
@@ -31,7 +33,7 @@ namespace Engine
             // wait if exists
             if (_step.WaitingSecond > 0)
             {
-                Console.WriteLine($"TestStepForActionOnly waits for {_step.WaitingSecond} seconds");
+                _logger.WriteInfo($"TestStepForActionOnly waits for {_step.WaitingSecond} seconds");
                 await Task.Delay(_step.WaitingSecond * 1000).ConfigureAwait(false);
             }
 

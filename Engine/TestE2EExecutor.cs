@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using CommonContracts;
+using Abstractions;
 
 namespace Engine
 {
@@ -12,13 +12,15 @@ namespace Engine
         private readonly ITestE2E _testE2E;
         private readonly IComputer _computer;
         private readonly IReadOnlyList<IImageService> _imageService;
+        private readonly ILogger _logger;
         private Process _targetProcess;
 
-        public TestE2EExecutor(ITestE2E testE2E, IComputer computer, IReadOnlyList<IImageService> imageService)
+        public TestE2EExecutor(ITestE2E testE2E, IComputer computer, IReadOnlyList<IImageService> imageService, ILogger logger)
         {
             _testE2E = testE2E;
             _computer = computer;
             _imageService = imageService;
+            _logger = logger;
         }
 
         public async Task<bool> ExecuteAsync()
@@ -31,18 +33,18 @@ namespace Engine
             if (_testE2E.Steps == null
                 || _testE2E.Steps.Count == 0)
             {
-                return false;
+                // No step to run. Consider as true result.
+                return true;
             }
 
             bool finalResult = true;
 
             foreach (ITestStep step in _testE2E.Steps)
             {
-                ITestStepExecutor testStepExecutor = TestStepExecutorGenerator.Generate(step, _computer, _imageService);
+                ITestStepExecutor testStepExecutor = TestStepExecutorGenerator.Generate(step, _computer, _imageService, _logger);
 
                 if (testStepExecutor == null)
                 {
-                    // TODO: log?
                     continue;
                 }
 
@@ -50,8 +52,6 @@ namespace Engine
 
                 if (step.FailureReport)
                 {
-                    // TODO: log?
-                    Console.WriteLine($"failResult = {finalResult}");
                     finalResult = finalResult && result;
                 }
 
@@ -59,9 +59,6 @@ namespace Engine
                 {
                     break;
                 }
-
-                // TODO: log result?
-
             }
 
             CloseTargetProgram();
@@ -77,9 +74,9 @@ namespace Engine
                 {
                     _targetProcess.Kill();
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // TODO: log?
+                    _logger.WriteInfo("Fail to close test process. " + ex);
                 }
             }
         }
@@ -95,7 +92,7 @@ namespace Engine
             _targetProcess = Process.Start(_testE2E.ProgramToLaunch);
             // wait for 10 seconds and let target program be ready
             // It's stupid to wait for a fixed amount of time. 
-            // TODO:We should make it defined in json.
+            // TODO: We should make it defined in json.
             Thread.Sleep(10000);
         }
     }

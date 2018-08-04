@@ -1,5 +1,5 @@
 ﻿using System;
-using CommonContracts;
+using Abstractions;
 
 namespace Engine
 {
@@ -9,13 +9,15 @@ namespace Engine
         private readonly string _action;
         private readonly string _actionArg;
         private readonly (int X, int Y) _location;
+        private readonly ILogger _logger;
 
-        public KeyboardAction(IKeyboard keyboard, string action, string actionArg, (int X, int Y) location)
+        public KeyboardAction(IKeyboard keyboard, string action, string actionArg, (int X, int Y) location, ILogger logger)
         {
             _keyboard = keyboard;
             _action = action;
             _actionArg = actionArg;
             _location = location;
+            _logger = logger;
         }
 
         public void Execute()
@@ -24,13 +26,11 @@ namespace Engine
 
             if (actionData.Length != 2)
             {
-                // TODO: log?
-                Console.WriteLine("Action is not in a good format");
+                _logger.WriteError("Action is not in a good format");
                 return;
             }
-        
-            // TODO: log?
-            Console.WriteLine($"Keyboard command = {actionData[1]}, content = {_actionArg} in location ({_location.X},{_location.Y})");
+
+            _logger.WriteInfo($"Keyboard command = {actionData[1]}, content = {_actionArg} in location ({_location.X},{_location.Y})");
             DoKeyboardAction(actionData[1], _location);
         }
 
@@ -40,6 +40,7 @@ namespace Engine
 
             if (string.Equals(command, "sendkeys", StringComparison.OrdinalIgnoreCase))
             {
+                // TODO : find another way to handle keyboard action without location here
                 if (location.X == -1 && location.Y == -1)
                 {
                     _keyboard.SendKeys(_actionArg);

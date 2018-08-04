@@ -1,4 +1,4 @@
-﻿namespace CommonContracts
+﻿namespace Abstractions
 {
     public interface IKeyboard
     {

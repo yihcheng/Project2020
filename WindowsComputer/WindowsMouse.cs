@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Threading;
-using CommonContracts;
+using Abstractions;
 
 namespace WindowsComputer
 {

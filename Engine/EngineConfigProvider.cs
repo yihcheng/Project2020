@@ -1,14 +1,14 @@
-﻿using CommonContracts;
+﻿using Abstractions;
 
 namespace Engine
 {
     internal static class EngineConfigProvider
     {
-        private static string configFilePath = ".\\EngineConfig.json";
+        private const string _configFilePath = ".\\EngineConfig.json";
 
         public static IEngineConfig GetConfig()
         {
-            return new EngineConfig(configFilePath);
+            return new EngineConfig(_configFilePath);
         }
     }
 }

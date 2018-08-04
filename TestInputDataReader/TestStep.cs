@@ -1,10 +1,10 @@
-﻿using CommonContracts;
+﻿using Abstractions;
 
-namespace TestActionProducer
+namespace TestInputDataReader
 {
-    public class TestAction : ITestStep
+    public class TestStep : ITestStep
     {
-        public TestAction()
+        public TestStep()
         {
         }
 

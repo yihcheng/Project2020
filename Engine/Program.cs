@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CommonContracts;
+using Abstractions;
 
 namespace Engine
 {
@@ -9,20 +9,19 @@ namespace Engine
     {
         static async Task Main(string[] args)
         {
-            //ConsoleUtility.HideWindow();
+            // get engine config
+            IEngineConfig engineConfig = EngineConfigProvider.GetConfig();
+            ILogger logger = EngineLoggerProvider.GetLogger(engineConfig);
 
             try
             {
-                // get engine config
-                IEngineConfig _engineConfig = EngineConfigProvider.GetConfig();
-
                 // Create objects for current environment
-                ITestE2EReader _e2eReader = TestE2EReaderProvider.GetReader();
+                ITestE2EReader _e2eReader = TestE2EReaderProvider.GetReader(logger);
                 IComputer _computer = ComputerSelector.GetCurrentComputer();
-                IReadOnlyList<IImageService> _imageService = ImageServiceProvider.GetImageServices(_computer, _engineConfig);
+                IReadOnlyList<IImageService> _imageService = ImageServiceProvider.GetImageServices(_computer, engineConfig, logger);
 
                 // create engine
-                IEngine engine = new Engine(_e2eReader, _computer, _imageService, _engineConfig);
+                IEngine engine = new Engine(_e2eReader, _computer, _imageService, engineConfig, logger);
 
                 string e2eFile = null;
 
@@ -36,11 +35,8 @@ namespace Engine
             }
             catch (Exception ex)
             {
-                // TODO: log ?
+                logger.WriteInfo("Error = " + ex);
             }
-         
-            //Console.WriteLine("done");
-            //ConsoleUtility.ShowWindow();
         }
     }
 }

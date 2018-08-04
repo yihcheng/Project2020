@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CommonContracts
+namespace Abstractions
 {
     public interface ITestE2E
     {
@@ -9,7 +9,7 @@ namespace CommonContracts
         string ShortName { get; }
         bool Skip { get; }
         string ProgramToLaunch { get; }
-        IList<ITestStep> Steps { get; }
+        IReadOnlyList<ITestStep> Steps { get; }
     }
 
     public interface ITestStep

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using CommonContracts;
+using Abstractions;
 
-namespace TestActionProducer
+namespace TestInputDataReader
 {
     public class TestE2E : ITestE2E
     {
@@ -17,6 +17,6 @@ namespace TestActionProducer
 
         public string ProgramToLaunch { get; set; }
 
-        public IList<ITestStep> Steps { get; set; }
+        public IReadOnlyList<ITestStep> Steps { get; set; }
     }
 }
