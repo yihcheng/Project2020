@@ -67,7 +67,7 @@ namespace TestInputDataReader
 
                 if (jActions[actionId]["ActionArgument"] != null)
                 {
-                    action.ActionArgument = (string)jActions[actionId]["ActionArgument"];
+                    action.ActionArgument = Environment.ExpandEnvironmentVariables(jActions[actionId]["ActionArgument"].ToString());
                 }
 
                 if (jActions[actionId]["Waiting"] != null)
