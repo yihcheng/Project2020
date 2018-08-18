@@ -3,7 +3,7 @@
   "ShortName": "dummytest2",
   "LastUpdated": "2018-07-01 13:14",
   "Skip": "true",
-  "ProgramToLaunch": "mspaint.exe",
+  "ProgramToLaunch": "mspaint2.exe",
   "Steps": [
     {
       "Target": "image",
@@ -14,18 +14,10 @@
       "FailureReport": "true"
     },
     {
-      "Target": "image",
-      "Search": ".\\images\\dummytest2-2.jpg",
-      "ScreenArea": "top",
-      "Action": "mouse.click",
-      "Waiting": "2",
-      "FailureReport": "true"
-    },
-    {
       "Target": "text",
-      "Search": "OK",
-      "ScreenArea": "center",
-      "Action": "mouse.click",
+      "Search": "TextToSearch",
+      "ScreenArea": "down",
+      "Action": "mouse.rightclick",
       "Waiting": "2",
       "FailureReport": "true"
     }

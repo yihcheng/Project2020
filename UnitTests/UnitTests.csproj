@@ -1,31 +1,42 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.9.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
+    <ProjectReference Include="..\Engine\Engine.csproj" />
     <ProjectReference Include="..\ImageServiceProxy\ImageServiceProxy.csproj" />
     <ProjectReference Include="..\TestInputDataReader\TestInputDataReader.csproj" />
     <ProjectReference Include="..\WindowsComputer\WindowsComputer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="teste2e-2.json">
+    <None Update="Engine\EngineConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="teste2e-1.json">
+    <None Update="TestInputData\teste2e-2.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestInputData\teste2e-1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestInputData\teste2e-environmentvariable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ImageService\" />
   </ItemGroup>
 
 </Project>

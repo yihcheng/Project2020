@@ -14,10 +14,11 @@
       "FailureReport": "true"
     },
     {
-      "Target": "image",
-      "Search": ".\\images\\dummytest2-2.jpg",
-      "ScreenArea": "top",
-      "Action": "mouse.click",
+      "Target": "",
+      "Search": "",
+      "ScreenArea": "",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "email",
       "Waiting": "2",
       "FailureReport": "true"
     },
@@ -25,7 +26,7 @@
       "Target": "text",
       "Search": "OK",
       "ScreenArea": "center",
-      "Action": "mouse.click",
+      "Action": "mouse.doubleclick",
       "Waiting": "2",
       "FailureReport": "true"
     }
