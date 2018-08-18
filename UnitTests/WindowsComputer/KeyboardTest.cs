@@ -4,7 +4,7 @@ using Moq;
 using WindowsComputer;
 using Xunit;
 
-namespace UnitTests
+namespace UnitTests.WindowsComputer
 {
     public class KeyboardTest
     {

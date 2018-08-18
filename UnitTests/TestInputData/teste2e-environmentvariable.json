@@ -1,0 +1,18 @@
+{
+  "FullName": "dummy-test2",
+  "ShortName": "dummytest2",
+  "LastUpdated": "2018-07-01 13:14",
+  "Skip": "true",
+  "ProgramToLaunch": "mspaint2.exe",
+  "Steps": [
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": "",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "%var1%",
+      "Waiting": "2",
+      "FailureReport": "true"
+    }
+  ]
+}
