@@ -58,7 +58,7 @@ namespace Engine
             {
                 string providerName = jOCRProviders[i]["Provider"].Value<string>();
                 string endpoint = jOCRProviders[i]["Endpoint"].Value<string>();
-                string key = jOCRProviders[i]["Key"].Value<string>();
+                string key = Environment.ExpandEnvironmentVariables(jOCRProviders[i]["Key"].Value<string>());
                 providers.Add(new OCRProviderConfig(providerName, endpoint, key));
             }
 
