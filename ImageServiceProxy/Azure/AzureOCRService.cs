@@ -14,9 +14,9 @@ namespace ImageServiceProxy.Azure
     internal class AzureOCRService : IImageService
     {
         // Let me know if you need the source code of those services.
-        private readonly string _azureOCRUrl; // = "https://eastasia.api.cognitive.microsoft.com/vision/v2.0/recognizeText?mode=Printed";
+        private readonly string _azureOCRUrl;
         private const string _requestHeaderKeyword = "Ocp-Apim-Subscription-Key";
-        private readonly string _azureOCRKey; //= "1ad450620bb545e69f9ea2294a795e47";
+        private readonly string _azureOCRKey;
         private const string _providerName = "Azure";
         private readonly IComputer _computer;
         private readonly IOCRResultTextFinder _textFinder;
@@ -72,7 +72,6 @@ namespace ImageServiceProxy.Azure
                 }
 
                 string status = "";
-                await Task.Delay(2000).ConfigureAwait(false);
                 int count = 0;
 
                 while (true)
@@ -92,7 +91,7 @@ namespace ImageServiceProxy.Azure
                         return "";
                     }
 
-                    await Task.Delay(1000).ConfigureAwait(false);
+                    await Task.Delay(500).ConfigureAwait(false);
 
                     if (count == 30)
                     {
