@@ -1,10 +1,20 @@
 {
   "OCRProvider": [
     {
-      "Provider": "Azure",
-      "Endpoint": "https://westus.api.cognitive.microsoft.com/vision/v2.0/recognizeText?mode=Printed",
-      "Key": "xxxxxxx"
-    }
+		"Provider": "Azure",
+		"Endpoint": "https://eastasia.api.cognitive.microsoft.com/vision/v2.0/recognizeText?mode=Printed",
+		"Key": "%azurecvkey%"
+    },
+	{
+		"Provider": "AWS",
+		"Endpoint": "https://xxxxxx",
+		"Key": "%env-var%"
+	},
+	{
+		"Provider": "GCP",
+		"Endpoint": "https://yyyy",
+		"Key": "%env-var%"
+	}
   ],
   "TestJsonFileFolder": ".\\E2EFiles\\",
   "LoggerType": "Console",

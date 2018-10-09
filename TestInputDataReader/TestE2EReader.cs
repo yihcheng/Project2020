@@ -31,10 +31,10 @@ namespace TestInputDataReader
 
                 e2e = new TestE2E()
                 {
-                    FullName = (string)jObj["FullName"],
-                    ShortName = (string)jObj["ShortName"],
-                    Skip = (bool)jObj["Skip"],
-                    ProgramToLaunch = (string)jObj["ProgramToLaunch"],
+                    FullName = jObj["FullName"].Value<string>(),
+                    ShortName = jObj["ShortName"].Value<string>(),
+                    Skip = jObj["Skip"].Value<bool>(),
+                    ProgramToLaunch = jObj["ProgramToLaunch"].Value<string>(),
                     Steps = steps
                 };
             }
@@ -46,7 +46,7 @@ namespace TestInputDataReader
             return e2e;
         }
 
-        private IReadOnlyList<ITestStep> ParseTestSteps(JArray jActions)
+        internal IReadOnlyList<ITestStep> ParseTestSteps(JArray jActions)
         {
             List<ITestStep> actions = new List<ITestStep>();
 
@@ -54,25 +54,40 @@ namespace TestInputDataReader
             {
                 TestStep action = new TestStep
                 {
-                    Target = (string)jActions[actionId]["Target"],
-                    Search = (string)jActions[actionId]["Search"],
-                    SearchArea = GetScreenSearchArea((string)jActions[actionId]["ScreenArea"]),
-                    FailureReport = (bool)jActions[actionId]["FailureReport"]
+                    Target = jActions[actionId]["Target"].Value<string>(),
+                    Search = jActions[actionId]["Search"].Value<string>(),
+                    SearchArea = GetScreenSearchArea(jActions[actionId]["ScreenArea"].Value<string>()),
+                    FailureReport = jActions[actionId]["FailureReport"].Value<bool>()
                 };
 
                 if (jActions[actionId]["Action"] != null)
                 {
-                    action.Action = (string)jActions[actionId]["Action"];
+                    action.Action = jActions[actionId]["Action"].Value<string>();
                 }
 
-                if (jActions[actionId]["ActionArgument"] != null)
+                // ActionArgument may be a value from environment variable
+                if (jActions[actionId]["ActionArgument"] != null 
+                    && !string.IsNullOrEmpty(jActions[actionId]["ActionArgument"].Value<string>()))
                 {
-                    action.ActionArgument = Environment.ExpandEnvironmentVariables(jActions[actionId]["ActionArgument"].ToString());
+                    action.ActionArgument = Environment.ExpandEnvironmentVariables(jActions[actionId]["ActionArgument"].Value<string>());
                 }
 
-                if (jActions[actionId]["Waiting"] != null)
+                // it's reasonable to reject a waiting time larger than 1000 seconds
+                if (jActions[actionId]["Waiting"] != null 
+                    && int.TryParse(jActions[actionId]["Waiting"].Value<string>(), out int waiting)
+                    && waiting > 0
+                    && waiting < 1000)
                 {
-                    action.WaitingSecond = (int)jActions[actionId]["Waiting"];
+                    action.WaitingSecond = waiting;
+                }
+
+                // it's reasonable to reject a retry number larger than 10
+                if (jActions[actionId]["Retry"] != null 
+                    && int.TryParse(jActions[actionId]["Retry"].Value<string>(), out int retry)
+                    && retry > 0
+                    && retry < 11)
+                {
+                    action.Retry = retry;
                 }
 
                 actions.Add(action);

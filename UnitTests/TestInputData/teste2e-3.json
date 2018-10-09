@@ -10,9 +10,9 @@
       "Search": ".\\images\\dummytest2-1.jpg",
       "ScreenArea": "top",
       "Action": "mouse.click",
-      "Waiting": "2",
+      "Waiting": "1000",
       "FailureReport": "true",
-	  "Retry": "2"
+	  "Retry": "11"
     },
     {
       "Target": "",
@@ -20,16 +20,9 @@
       "ScreenArea": "",
       "Action": "keyboard.sendkeys",
       "ActionArgument": "email",
-      "Waiting": "2",
-      "FailureReport": "true"
-    },
-    {
-      "Target": "text",
-      "Search": "OK",
-      "ScreenArea": "center",
-      "Action": "mouse.doubleclick",
-      "Waiting": "2",
-      "FailureReport": "true"
+      "Waiting": "-1",
+      "FailureReport": "true",
+	  "Retry": "-1"
     }
   ]
 }

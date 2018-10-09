@@ -21,6 +21,7 @@ namespace Abstractions
         ScreenSearchArea SearchArea { get; }
         int WaitingSecond { get; }
         bool FailureReport { get; }
+        int Retry { get; }
     }
 
     public interface ITestStepExecutor

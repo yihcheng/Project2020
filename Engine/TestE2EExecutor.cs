@@ -48,14 +48,27 @@ namespace Engine
                     continue;
                 }
 
-                bool result = await testStepExecutor.ExecuteAsync().ConfigureAwait(false);
+                int retry = 0;
+                bool stepResult = false;
+
+                while (retry <= step.Retry)
+                {
+                    stepResult = await testStepExecutor.ExecuteAsync().ConfigureAwait(false);
+
+                    if (stepResult)
+                    {
+                        break;
+                    }
+
+                    retry++;
+                }
 
                 if (step.FailureReport)
                 {
-                    finalResult = finalResult && result;
+                    finalResult = finalResult && stepResult;
                 }
 
-                if (!result && step.FailureReport)
+                if (!stepResult && step.FailureReport)
                 {
                     break;
                 }

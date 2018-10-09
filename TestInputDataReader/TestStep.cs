@@ -21,5 +21,7 @@ namespace TestInputDataReader
         public int WaitingSecond { get; set; }
 
         public bool FailureReport { get; set; }
+
+        public int Retry { get; set; }
     }
 }

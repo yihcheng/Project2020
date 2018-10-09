@@ -11,7 +11,8 @@
       "ScreenArea": "top-left",
       "Action": "mouse.click",
       "Waiting": "1",
-      "FailureReport": "true"
+      "FailureReport": "true",
+	  "Retry": "1"
     },
     {
       "Target": "text",
