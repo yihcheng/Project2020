@@ -64,6 +64,11 @@
     <Compile Include="EngineEnvironment.cs" />
     <Compile Include="EngineLogger.cs" />
     <Compile Include="EngineLoggerProvider.cs" />
+    <Compile Include="EngineResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EngineResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="FileUtility.cs" />
     <Compile Include="KeyboardAction.cs" />
     <Compile Include="MouseAction.cs" />
@@ -117,6 +122,12 @@
       <Project>{b3e3843f-25ae-45f0-a4a6-d7aef20012c1}</Project>
       <Name>WindowsComputer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="EngineResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>EngineResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -26,16 +26,28 @@ namespace Engine
             EngineEnvironment.EnsureEnvironment(config);
         }
 
-        public async Task RunAsync(string e2eFile = null)
+        public async Task RunAsync(string[] e2eFiles = null)
         {
-            string[] e2eFiles = GetAllTestE2EFiles();
+            if (e2eFiles == null || e2eFiles.Length == 0)
+            {
+                _logger.WriteInfo(EngineResource.NoInputFile);
+                _logger.WriteInfo("");
+                _logger.WriteInfo(EngineResource.EngineMessage);
+                return;
+            }
+
             bool finalResult = true;
 
             for (int i = 0; i < e2eFiles.Length; i++)
             {
-                if (!string.IsNullOrEmpty(e2eFile)
-                    && !string.Equals(Path.GetFileName(e2eFiles[i]), e2eFile, StringComparison.OrdinalIgnoreCase))
+                if (string.IsNullOrEmpty(e2eFiles[i]))
                 {
+                    continue;
+                }
+
+                if (!File.Exists(e2eFiles[i]))
+                {
+                    _logger.WriteInfo($"{e2eFiles[i]} doesn't exist.");
                     continue;
                 }
 
@@ -64,13 +76,6 @@ namespace Engine
             }
 
             DisplayFinalResult(finalResult);
-        }
-
-        private static string[] GetAllTestE2EFiles()
-        {
-            string folder = Path.Combine(Environment.CurrentDirectory, _engineConfig["TestJsonFileFolder"]);
-
-            return Directory.GetFiles(folder, "*.json");
         }
 
         private void DisplayFinalResult(bool finalResult)
