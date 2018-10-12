@@ -91,8 +91,6 @@ namespace ImageServiceProxy.Azure
                         return "";
                     }
 
-                    await Task.Delay(500).ConfigureAwait(false);
-
                     if (count == 30)
                     {
                         break;
