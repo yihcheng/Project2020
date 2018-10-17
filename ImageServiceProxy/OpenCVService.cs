@@ -1,5 +1,6 @@
 ﻿using Abstractions;
 using OpenCvSharp;
+using System.IO;
 
 namespace ImageServiceProxy
 {
@@ -7,10 +8,14 @@ namespace ImageServiceProxy
     {
         public OpenCVService()
         {
-
         }
 
-        // This is CCoeffNormed mode
+        /// <summary>
+        /// This is OpenCV MatchTemplate CCoeffNormed mode
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="template"></param>
+        /// <returns>(double, int, int) = confidence and location X, Y</returns>
         public (double, int, int)? TemplateMatch(byte[] search, byte[] template)
         {
             if (search == null
@@ -51,6 +56,40 @@ namespace ImageServiceProxy
             }
 
             return (maxval, X, Y);
+        }
+
+        public void DrawRedRectangle(string imageFile, int X, int Y, int width, int height)
+        {
+            if (string.IsNullOrEmpty(imageFile)
+                || !File.Exists(imageFile)
+                || X < 0
+                || Y < 0
+                || width < 0
+                || height < 0)
+            {
+                return;
+            }
+
+            Mat sourceMat = new Mat(imageFile, ImreadModes.AnyDepth | ImreadModes.AnyColor);
+            Rect rect = new Rect(X, Y, width, height);
+            Cv2.Rectangle(sourceMat, rect, Scalar.Red, 2);
+            sourceMat.SaveImage(imageFile);
+        }
+
+        public void PutText(string imageFile, int X, int Y, string message)
+        {
+            if (string.IsNullOrEmpty(imageFile)
+             || !File.Exists(imageFile)
+             || X < 0
+             || Y < 0
+             || string.IsNullOrEmpty(message))
+            {
+                return;
+            }
+
+            Mat sourceMat = new Mat(imageFile, ImreadModes.AnyDepth | ImreadModes.AnyColor);
+            sourceMat.PutText(message, new Point(X, Y), HersheyFonts.HersheyComplexSmall, 1, Scalar.Red, 1);
+            sourceMat.SaveImage(imageFile);
         }
     }
 }

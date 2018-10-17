@@ -11,11 +11,11 @@ namespace Engine
         // TODO: should not hard-code it. It should go to config file.
         private static ITestE2EReader _testE2EReader;
         private static IComputer _computer;
-        private static IReadOnlyList<IImageService> _imageServices;
+        private static IReadOnlyList<ICloudOCRService> _imageServices;
         private static IEngineConfig _engineConfig;
         private static ILogger _logger;
 
-        public Engine(ITestE2EReader reader, IComputer computer, IReadOnlyList<IImageService> services, IEngineConfig config, ILogger logger)
+        public Engine(ITestE2EReader reader, IComputer computer, IReadOnlyList<ICloudOCRService> services, IEngineConfig config, ILogger logger)
         {
             _testE2EReader = reader;
             _computer = computer;
@@ -62,12 +62,11 @@ namespace Engine
 
                     _logger.WriteInfo($"Running E2E test - {teste2e.FullName}");
 
-                    TestE2EExecutor executor = new TestE2EExecutor(teste2e, _computer, _imageServices, _logger);
+                    TestE2EExecutor executor = new TestE2EExecutor(teste2e, _computer, _imageServices, _logger, _engineConfig);
                     bool result = await executor.ExecuteAsync().ConfigureAwait(false);
                     finalResult = finalResult && result;
 
                     _logger.WriteInfo($"{teste2e.FullName} is done. The result is {result}");
-                    await Task.Delay(1000).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

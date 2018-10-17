@@ -23,9 +23,14 @@
         FullScreen
     }
 
-    public interface IScreenLocation
+    public interface IScreenArea
     {
-        int X { get; }
-        int Y { get; }
+        (int X, int Y) GetCentralPoint();
+        int Top { get; }
+        int Left { get; }
+        int Bottom { get; }
+        int Right { get; }
+        int Width { get; }
+        int Height { get; }
     }
 }

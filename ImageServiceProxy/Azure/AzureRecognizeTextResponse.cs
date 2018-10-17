@@ -8,48 +8,55 @@ namespace ImageServiceProxy.Azure
         public IAzureRecognizeResult RecognitionResult { get; set; }
     }
 
-    internal class RecognitionResult : IAzureRecognizeResult
+    internal class AzureRecognitionResult : IAzureRecognizeResult
     {
         public IAzureLine[] Lines { get; set; }
     }
 
-    internal class Line : IAzureLine
+    internal class AzureLine : IAzureLine
     {
         public int[] BoundingBox { get; set; }
         public string Text { get; set; }
         public IAzureWord[] Words { get; set; }
 
-        public IScreenLocation GetCentralLocation()
+        public IScreenArea GetArea()
         {
-            return LocationUtility.GetCentralLocation(BoundingBox);
+            return AzureLocationUtility.GetScreenLocation(BoundingBox);
         }
     }
 
-    internal class Word : IAzureWord
+    internal class AzureWord : IAzureWord
     {
         public int[] BoundingBox { get; set; }
         public string Text { get; set; }
 
-        public IScreenLocation GetCentralLocation()
+        public IScreenArea GetArea()
         {
-            return LocationUtility.GetCentralLocation(BoundingBox);
+            return AzureLocationUtility.GetScreenLocation(BoundingBox);
         }
     }
 
-    internal static class LocationUtility
+    //      (0,1)       (2,3)
+    //       -------------
+    //       |           |
+    //       -------------
+    //      (6,7)       (4,5)
+
+    internal static class AzureLocationUtility
     {
-        public static IScreenLocation GetCentralLocation(int[] boundingBox)
+        public static IScreenArea GetScreenLocation(int[] boundingBox)
         {
-            if (boundingBox == null
-            || boundingBox.Length != 8)
+            if (boundingBox == null || boundingBox.Length != 8)
             {
                 return null;
             }
 
-            int X = (boundingBox[0] + boundingBox[2]) / 2;
-            int Y = (boundingBox[1] + boundingBox[7]) / 2;
+            int top = boundingBox[1] < boundingBox[2] ? boundingBox[1] : boundingBox[2];
+            int bottom = boundingBox[7] < boundingBox[5] ? boundingBox[5] : boundingBox[7];
+            int left = boundingBox[0] < boundingBox[6] ? boundingBox[0] : boundingBox[6];
+            int right = boundingBox[2] < boundingBox[4] ? boundingBox[4] : boundingBox[2];
 
-            return new ScreenLocation(X, Y);
+            return new ScreenArea(top, left, bottom, right);
         }
     }
 }

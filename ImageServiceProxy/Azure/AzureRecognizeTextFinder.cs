@@ -21,13 +21,13 @@ namespace ImageServiceProxy.Azure
                 Status = (string)jObj["status"]
             };
 
-            RecognitionResult recognitionResult = new RecognitionResult();
+            AzureRecognitionResult recognitionResult = new AzureRecognitionResult();
             List<IAzureLine> lines = new List<IAzureLine>();
             JArray jsonLines = (JArray)jObj["recognitionResult"]["lines"];
 
             for (int lineId = 0; lineId < jsonLines.Count; lineId++)
             {
-                IAzureLine line = new Line
+                IAzureLine line = new AzureLine
                 {
                     BoundingBox = ParseBoundingBox((JArray)jsonLines[lineId]["boundingBox"]),
                     Text = (string)jsonLines[lineId]["text"],
@@ -48,7 +48,7 @@ namespace ImageServiceProxy.Azure
 
             for (int id = 0; id < word.Count; id++)
             {
-                IAzureWord w = new Word
+                IAzureWord w = new AzureWord
                 {
                     Text = (string)word[id]["text"],
                     BoundingBox = ParseBoundingBox((JArray)word[id]["boundingBox"])
@@ -75,14 +75,14 @@ namespace ImageServiceProxy.Azure
                                   string jsonResult,
                                   IScreen screen,
                                   ScreenSearchArea searchArea,
-                                  out IScreenLocation location)
+                                  out IScreenArea area)
         {
             if (string.IsNullOrEmpty(textToSearch))
             {
                 throw new ArgumentNullException();
             }
 
-            location = null;
+            area = null;
             IAzureRecognizeTextResponse textResponse = Deserialize(jsonResult);
 
             if (textResponse.RecognitionResult?.Lines?.Length == 0)
@@ -94,26 +94,30 @@ namespace ImageServiceProxy.Azure
 
             foreach (IAzureLine line in textResponse.RecognitionResult?.Lines)
             {
-                int X = line.GetCentralLocation().X;
-                int Y = line.GetCentralLocation().Y;
+                (int X, int Y) = line.GetArea().GetCentralPoint();
 
                 if (isLine)
                 {
                     if (line.Text.IndexOf(textToSearch, StringComparison.OrdinalIgnoreCase) >= 0
-                    && screen.IsSearchAreaMatch(searchArea, (X, Y)))
+                        && screen.IsSearchAreaMatch(searchArea, (X, Y)))
                     {
-                        location = line.GetCentralLocation();
+                        area = line.GetArea();
                         return true;
                     }
                 }
                 else if (line.Words.Length > 0)
                 {
-                    IAzureWord word = line.Words.FirstOrDefault(x => string.Equals(x.Text, textToSearch, StringComparison.OrdinalIgnoreCase));
+                    IAzureWord word = Array.Find(line.Words, x => string.Equals(x.Text, textToSearch, StringComparison.OrdinalIgnoreCase));
 
-                    if (word != null && screen.IsSearchAreaMatch(searchArea, (word.GetCentralLocation().X, word.GetCentralLocation().Y)))
+                    if (word != null)
                     {
-                        location = word.GetCentralLocation();
-                        return true;
+                        (int X2, int Y2) = word.GetArea().GetCentralPoint();
+
+                        if (screen.IsSearchAreaMatch(searchArea, (X2, Y2)))
+                        {
+                            area = word.GetArea();
+                            return true;
+                        }
                     }
                 }
             }

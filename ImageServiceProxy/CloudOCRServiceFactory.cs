@@ -4,24 +4,21 @@ using ImageServiceProxy.Azure;
 
 namespace ImageServiceProxy
 {
-    public static class ImageServiceFactory
+    public static class CloudOCRServiceFactory
     {
-        private static IImageService _azureService;
+        private static ICloudOCRService _azureService;
         private static IOpenCVService _opencvService;
-        private static ILogger _logger;
 
-        public static IImageService Create(string providerName, string serviceUrl, string serviceKey, IComputer computer, ILogger logger)
+        public static ICloudOCRService Create(string providerName, string serviceUrl, string serviceKey, IComputer computer, ILogger logger, IEngineConfig config)
         {
             if (string.IsNullOrEmpty(providerName))
             {
                 return null;
             }
 
-            _logger = logger;
-
             if (string.Equals(providerName, "azure", StringComparison.OrdinalIgnoreCase))
             {
-                return CreateAzureOCR(serviceUrl, serviceKey, computer, _logger);
+                return CreateAzureOCR(serviceUrl, serviceKey, computer, logger, config);
             }
 
             // Create other service here...
@@ -29,12 +26,12 @@ namespace ImageServiceProxy
             return null;
         }
 
-        private static IImageService CreateAzureOCR(string serviceUrl, string serviceKey, IComputer computer, ILogger logger)
+        private static ICloudOCRService CreateAzureOCR(string serviceUrl, string serviceKey, IComputer computer, ILogger logger, IEngineConfig config)
         {
             if (_azureService == null)
             {
                 IOCRResultTextFinder textFinder = new AzureRecognizeTextFinder();
-                _azureService = new AzureOCRService(computer, textFinder, GetOpenCVService(), serviceUrl, serviceKey, logger);
+                _azureService = new AzureOCRService(computer, textFinder, GetOpenCVService(), serviceUrl, serviceKey, logger, config);
             }
 
             return _azureService;

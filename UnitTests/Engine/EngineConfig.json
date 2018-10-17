@@ -1,14 +1,12 @@
 {
-  "OCRProvider": [
+  "OCRProviders": [
     {
       "Provider": "Azure",
       "Endpoint": "https://westus.api.cognitive.microsoft.com/vision/v2.0/recognizeText?mode=Printed",
       "Key": "%key1%"
     }
   ],
-  "TestJsonFileFolder": ".\\E2EFiles\\",
   "LoggerType": "Console",
   "ImageFolder": ".\\images\\",
-  "ScreenShotFolder": ".\\screenshot\\",
-  "OCRFailFolder": ".\\OCR-Fail\\"
+  "ArtifactsFolder": ".\\screenshot\\"
 }

@@ -18,7 +18,7 @@ namespace Engine
                 // Create objects for current environment
                 ITestE2EReader e2eReader = TestE2EReaderProvider.GetReader(logger);
                 IComputer computer = ComputerSelector.GetCurrentComputer();
-                IReadOnlyList<IImageService> imageService = ImageServiceProvider.GetImageServices(computer, engineConfig, logger);
+                IReadOnlyList<ICloudOCRService> imageService = ICloudOCRServiceProvider.GetCloudOCRServices(computer, engineConfig, logger);
 
                 // create engine
                 IEngine engine = new Engine(e2eReader, computer, imageService, engineConfig, logger);

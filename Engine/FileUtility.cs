@@ -4,19 +4,28 @@ namespace Engine
 {
     internal static class FileUtility
     {
-        public static void CreateParentFolder(string filePath)
+        public static bool EnsureParentFolder(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
             {
-                return;
+                return false;
             }
 
-            string dir = Path.GetDirectoryName(filePath);
-
-            if (!Directory.Exists(dir))
+            try
             {
-                Directory.CreateDirectory(dir);
+                string dir = Path.GetDirectoryName(filePath);
+
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
             }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -6,6 +6,6 @@ namespace ImageServiceProxy.Azure
     {
         int[] BoundingBox { get; set; }
         string Text { get; set; }
-        IScreenLocation GetCentralLocation();
+        IScreenArea GetArea();
     }
 }

@@ -52,7 +52,7 @@
     <Compile Include="IComputer.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="IEngineConfig.cs" />
-    <Compile Include="IImageService.cs" />
+    <Compile Include="ICloudOCRService.cs" />
     <Compile Include="IKeyboard.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IMouse.cs" />

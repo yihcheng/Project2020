@@ -5,15 +5,16 @@ using Abstractions;
 
 namespace Engine
 {
-    internal class TestStepForText : ITestStepExecutor
+    internal class TestStepForText : TestStepForBase, ITestStepExecutor
     {
-        private readonly IReadOnlyList<IImageService> _services;
+        private readonly IReadOnlyList<ICloudOCRService> _services;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
         private readonly ILogger _logger;
         private const string _targetKeyword = "text";
 
-        public TestStepForText(IReadOnlyList<IImageService> services, IComputer computer, ITestStep step, ILogger logger)
+        public TestStepForText(IReadOnlyList<ICloudOCRService> services, IComputer computer, ITestStep step, ILogger logger, IEngineConfig config)
+            : base(config)
         {
             _services = services;
             _computer = computer;
@@ -30,32 +31,31 @@ namespace Engine
                 return false;
             }
 
-            string filename = $".\\ScreenShotTemplate\\fullscreen-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
-            FileUtility.CreateParentFolder(filename);
+            string filename = $".\\{GetArtifactFolderValue()}\\FullScreen-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
+            FileUtility.EnsureParentFolder(filename);
             _computer.Screen.SaveFullScreenAsFile(filename);
             bool foundLocation = false;
-            IScreenLocation location = null;
+            IScreenArea area = null;
 
             for (int i = 0; i < _services.Count; i++)
             {
-                location = await _services[i].GetOCRResultAsync(filename, _step.Search, _step.SearchArea).ConfigureAwait(false);
+                area = await _services[i].GetOCRResultAsync(filename, _step.Search, _step.SearchArea).ConfigureAwait(false);
 
-                if (location != null)
+                if (area != null)
                 {
                     foundLocation = true;
                     break;
                 }
             }
 
-            if (foundLocation)
-            {
-                _logger.WriteInfo($"Text ({_step.Search}) is found at location ({location.X}, {location.Y})");
-            }
-            else
+            if (!foundLocation || area == null)
             {
                 _logger.WriteError($"Text ({_step.Search}) is NOT found.");
                 return false;
             }
+
+            (int X, int Y) = area.GetCentralPoint();
+            _logger.WriteInfo($"Text ({_step.Search}) is found at location ({X}, {Y})");
 
             // run action if exists
             if (!string.IsNullOrEmpty(_step.Action))
@@ -63,7 +63,7 @@ namespace Engine
                 ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(_computer,
                                                                                           _step.Action,
                                                                                           _step.ActionArgument,
-                                                                                          (location.X, location.Y),
+                                                                                          (X, Y),
                                                                                           _logger);
 
                 actionExecutor?.Execute();

@@ -6,14 +6,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Abstractions;
-using ImageServiceProxy.Utils;
 using Newtonsoft.Json.Linq;
 
 namespace ImageServiceProxy.Azure
 {
-    internal class AzureOCRService : IImageService
+    internal class AzureOCRService : ICloudOCRService
     {
-        // Let me know if you need the source code of those services.
         private readonly string _azureOCRUrl;
         private const string _requestHeaderKeyword = "Ocp-Apim-Subscription-Key";
         private readonly string _azureOCRKey;
@@ -22,13 +20,16 @@ namespace ImageServiceProxy.Azure
         private readonly IOCRResultTextFinder _textFinder;
         private readonly IOpenCVService _opencvService;
         private readonly ILogger _logger;
+        private readonly IEngineConfig _config;
+        private const string _artifactsFolderConfigKey = "ArtifactsFolder";
 
         public AzureOCRService(IComputer computer,
                                IOCRResultTextFinder textFinder,
                                IOpenCVService opencvService,
                                string serviceUrl,
                                string serviceKey,
-                               ILogger logger)
+                               ILogger logger,
+                               IEngineConfig config)
         {
             _computer = computer;
             _textFinder = textFinder;
@@ -36,6 +37,7 @@ namespace ImageServiceProxy.Azure
             _azureOCRUrl = serviceUrl;
             _azureOCRKey = serviceKey;
             _logger = logger;
+            _config = config;
         }
 
         public string ProviderName => _providerName;
@@ -47,7 +49,6 @@ namespace ImageServiceProxy.Azure
             try
             {
                 byte[] imageBytes = File.ReadAllBytes(imageFile);
-                string jsonString;
                 httpClient = new HttpClient();
                 string textOperationLocation = "";
 
@@ -71,24 +72,19 @@ namespace ImageServiceProxy.Azure
                     return "";
                 }
 
-                string status = "";
                 int count = 0;
+                string jsonString;
 
                 while (true)
                 {
                     HttpResponseMessage responseMessage = await httpClient.GetAsync(textOperationLocation).ConfigureAwait(false);
                     jsonString = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                     JObject jObj = JObject.Parse(jsonString);
-                    status = (string)jObj["status"];
+                    string status = (string)jObj["status"];
 
                     if (string.Equals(status, "Succeeded", StringComparison.OrdinalIgnoreCase))
                     {
                         return jsonString;
-                    }
-
-                    if (string.Equals(status, "Failed", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return "";
                     }
 
                     if (count == 30)
@@ -96,12 +92,18 @@ namespace ImageServiceProxy.Azure
                         break;
                     }
 
+                    await Task.Delay(100).ConfigureAwait(false);
+
                     count++;
                 }
             }
+            catch (HttpRequestException httpRequestEx)
+            {
+                _logger.WriteError($"{ServiceResource.NetworkErrorOnHttpRequest}  {httpRequestEx}");
+            }
             catch (Exception ex)
             {
-                _logger.WriteError("AzureOCRService GetOCRJsonResultAsync() error = " + ex);
+                _logger.WriteError($"{ServiceResource.AzureOCRGeneralError}  {ex}");
             }
             finally
             {
@@ -111,17 +113,17 @@ namespace ImageServiceProxy.Azure
             return "";
         }
 
-        public async Task<IScreenLocation> GetOCRResultAsync(string imageFile, string textToSearch, ScreenSearchArea searchArea)
+        public async Task<IScreenArea> GetOCRResultAsync(string imageFile, string textToSearch, ScreenSearchArea searchArea)
         {
             if (string.IsNullOrEmpty(imageFile) || string.IsNullOrEmpty(textToSearch))
             {
-                _logger.WriteError("Image file or search text is empty!");
+                _logger.WriteError(ServiceResource.EmptyImageFileSearchText);
                 return null;
             }
 
             if (!File.Exists(imageFile))
             {
-                _logger.WriteError("Image file does not exist in file system!");
+                _logger.WriteError(ServiceResource.ImageFileNotExist);
                 return null;
             }
 
@@ -129,24 +131,29 @@ namespace ImageServiceProxy.Azure
 
             if (string.IsNullOrEmpty(jsonResult))
             {
-                _logger.WriteError("Json result is empty from OCR service. OCR got failure!");
+                _logger.WriteError(ServiceResource.AzureEmtpyOCRResult);
                 return null;
             }
 
-            bool isLine = textToSearch.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length > 1;
-
-            if (_textFinder.TrySearchText(textToSearch, jsonResult, _computer.Screen, searchArea, out IScreenLocation location))
+            if (_textFinder.TrySearchText(textToSearch, jsonResult, _computer.Screen, searchArea, out IScreenArea area))
             {
-                return location;
+                _opencvService.DrawRedRectangle(imageFile, area.Left, area.Top, area.Width, area.Height);
+                return area;
             }
 
             try
             {
-                string ocrFailFileName = $"OCRfail{DateTime.Now.ToString("yyyyMMddHHmmss")}-{textToSearch}.txt";
-                string ocrFailFilePath = $".\\OCRfail\\{_providerName}-{ocrFailFileName}";
-                FileUtility.CreateParentFolder(ocrFailFilePath);
+                string ocrFailFileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}_{_providerName}_TextNotFound_[{textToSearch}].txt";
+                string artifactsFolder = Path.Combine(".\\", _config[_artifactsFolderConfigKey]);
+
+                // When engine has been started, artifact folder is ensured. It should be there. 
+                string ocrFailFilePath = Path.Combine(artifactsFolder, ocrFailFileName);
                 File.WriteAllText(ocrFailFilePath, jsonResult);
-                _logger.WriteError($"Cannot find text ({textToSearch}) in json result at {searchArea}. json is saved in {ocrFailFileName}");
+
+                // put message on image
+                string message = string.Format(ServiceResource.TextNotFoundInJsonResult, textToSearch, searchArea, ocrFailFileName);
+                _opencvService.PutText(imageFile, 1, _computer.Screen.Height / 2, message);
+                _logger.WriteError(message);
             }
             catch
             { }

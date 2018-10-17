@@ -10,7 +10,7 @@ namespace Engine
     {
         private Dictionary<string, string> _dataDict;
         private IReadOnlyList<IOCRProviderConfig> _ocrProviders;
-        private const string _ocrProviderKey = "OCRProvider";
+        private const string _ocrProviderConfigKey = "OCRProviders";
 
         public EngineConfig(string configFile)
         {
@@ -37,21 +37,21 @@ namespace Engine
             {
                 JProperty prop = (JProperty)token;
 
-                if (!string.Equals(prop.Name, _ocrProviderKey, StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(prop.Name, _ocrProviderConfigKey, StringComparison.OrdinalIgnoreCase))
                 {
-                    _dataDict[prop.Name] = prop.Value.ToString();
+                    _dataDict[prop.Name] = prop.Value.Value<string>();
                 }
             }
         }
 
         private IReadOnlyList<IOCRProviderConfig> ParseOCRProviderConfig(JObject root)
         {
-            if (root[_ocrProviderKey] == null)
+            if (root[_ocrProviderConfigKey] == null)
             {
                 throw new Exception("Cannot parse EngineConfig.json because OCRProvider is missing!");
             }
 
-            JArray jOCRProviders = (JArray)root[_ocrProviderKey];
+            JArray jOCRProviders = (JArray)root[_ocrProviderConfigKey];
             List<IOCRProviderConfig> providers = new List<IOCRProviderConfig>();
 
             for (int i = 0; i < jOCRProviders.Count; i++)

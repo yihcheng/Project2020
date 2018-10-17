@@ -6,15 +6,16 @@ using Abstractions;
 
 namespace Engine
 {
-    internal class TestStepForImage : ITestStepExecutor
+    internal class TestStepForImage : TestStepForBase, ITestStepExecutor
     {
-        private readonly IReadOnlyList<IImageService> _services;
+        private readonly IReadOnlyList<ICloudOCRService> _services;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
         private readonly ILogger _logger;
-        private readonly string _targetKeyword = "image";
+        private const string _targetKeyword = "image";
 
-        public TestStepForImage(IReadOnlyList<IImageService> services, IComputer computer, ITestStep action, ILogger logger)
+        public TestStepForImage(IReadOnlyList<ICloudOCRService> services, IComputer computer, ITestStep action, ILogger logger, IEngineConfig config)
+            : base(config)
         {
             _services = services;
             _computer = computer;
@@ -37,8 +38,8 @@ namespace Engine
                 return false;
             }
 
-            string fullScreenFile = $".\\ScreenShotTemplate\\template-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
-            FileUtility.CreateParentFolder(fullScreenFile);
+            string fullScreenFile = $".\\{GetArtifactFolderValue()}\\template-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
+            FileUtility.EnsureParentFolder(fullScreenFile);
             _computer.Screen.SaveFullScreenAsFile(fullScreenFile);
 
             byte[] searchFileBytes = File.ReadAllBytes(_step.Search);

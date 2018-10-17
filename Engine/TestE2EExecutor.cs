@@ -11,16 +11,18 @@ namespace Engine
     {
         private readonly ITestE2E _testE2E;
         private readonly IComputer _computer;
-        private readonly IReadOnlyList<IImageService> _imageService;
+        private readonly IReadOnlyList<ICloudOCRService> _imageService;
         private readonly ILogger _logger;
         private Process _targetProcess;
+        private readonly IEngineConfig _engineConfig;
 
-        public TestE2EExecutor(ITestE2E testE2E, IComputer computer, IReadOnlyList<IImageService> imageService, ILogger logger)
+        public TestE2EExecutor(ITestE2E testE2E, IComputer computer, IReadOnlyList<ICloudOCRService> imageService, ILogger logger, IEngineConfig config)
         {
             _testE2E = testE2E;
             _computer = computer;
             _imageService = imageService;
             _logger = logger;
+            _engineConfig = config;
         }
 
         public async Task<bool> ExecuteAsync()
@@ -41,7 +43,7 @@ namespace Engine
 
             foreach (ITestStep step in _testE2E.Steps)
             {
-                ITestStepExecutor testStepExecutor = TestStepExecutorGenerator.Generate(step, _computer, _imageService, _logger);
+                ITestStepExecutor testStepExecutor = TestStepExecutorGenerator.Generate(step, _computer, _imageService, _logger, _engineConfig);
 
                 if (testStepExecutor == null)
                 {

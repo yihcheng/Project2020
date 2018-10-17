@@ -4,22 +4,22 @@ using ImageServiceProxy;
 
 namespace Engine
 {
-    internal static class ImageServiceProvider
+    internal static class ICloudOCRServiceProvider
     {
-        public static IReadOnlyList<IImageService> GetImageServices(IComputer computer, IEngineConfig config, ILogger logger)
+        public static IReadOnlyList<ICloudOCRService> GetCloudOCRServices(IComputer computer, IEngineConfig config, ILogger logger)
         {
             IReadOnlyList<IOCRProviderConfig> ocrProviders = config.GetOCRProviders();
 
-            if (ocrProviders==null || ocrProviders.Count ==0)
+            if (ocrProviders == null || ocrProviders.Count == 0)
             {
                 return null;
             }
 
-            List<IImageService> services = new List<IImageService>();
+            List<ICloudOCRService> services = new List<ICloudOCRService>();
 
             foreach (IOCRProviderConfig providerConfig in ocrProviders)
             {
-                IImageService service = ImageServiceFactory.Create(providerConfig.Provider, providerConfig.Endpoint, providerConfig.Key, computer, logger);
+                ICloudOCRService service = CloudOCRServiceFactory.Create(providerConfig.Provider, providerConfig.Endpoint, providerConfig.Key, computer, logger, config);
 
                 if (service != null)
                 {
