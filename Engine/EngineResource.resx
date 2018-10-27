@@ -117,12 +117,48 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EngineErrorMessagePrefix" xml:space="preserve">
+    <value>Engine run error message =</value>
+  </data>
   <data name="EngineMessage" xml:space="preserve">
     <value>Usage : Engine.exe \"the path of test json file\" ...
         You may input multiple test json files
         For example: Engine.exe .\\files\\test1.json .\\files\\test2.json</value>
   </data>
+  <data name="FailClosePrefix" xml:space="preserve">
+    <value>Fail to close test process.</value>
+  </data>
+  <data name="FileNotExist" xml:space="preserve">
+    <value>"{0}" doesn't exist.</value>
+  </data>
+  <data name="FinalResultFailed" xml:space="preserve">
+    <value>The final test result is FAILED!</value>
+  </data>
+  <data name="FinalResultPass" xml:space="preserve">
+    <value>The final test result is PASS!</value>
+  </data>
   <data name="NoInputFile" xml:space="preserve">
     <value>No input file. Engine stops.</value>
+  </data>
+  <data name="NoTestStep" xml:space="preserve">
+    <value>"{0}" test doesn't contain any test step.</value>
+  </data>
+  <data name="RunTestFinalMessage" xml:space="preserve">
+    <value>"{0}" is done. The result is {1}.</value>
+  </data>
+  <data name="RunTestHeaderMessage" xml:space="preserve">
+    <value>Running end-to-end test - {0}</value>
+  </data>
+  <data name="TestProgramClosed" xml:space="preserve">
+    <value>The program to test ({0}) is closed.</value>
+  </data>
+  <data name="TestProgramFailedLaunch" xml:space="preserve">
+    <value>The program to test ({0}) fails to launch.</value>
+  </data>
+  <data name="TestProgramLaunched" xml:space="preserve">
+    <value>The program to test ({0}) is launched.</value>
+  </data>
+  <data name="TestStepCountMessage" xml:space="preserve">
+    <value>This test has {0} test step(s).</value>
   </data>
 </root>

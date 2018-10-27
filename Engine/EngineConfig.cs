@@ -65,7 +65,7 @@ namespace Engine
             return providers;
         }
 
-        string IEngineConfig.this[string key] => _dataDict[key];
+        string IEngineConfig.this[string key] => _dataDict.ContainsKey(key) ? _dataDict[key] : string.Empty;
 
         public IReadOnlyList<IOCRProviderConfig> GetOCRProviders()
         {

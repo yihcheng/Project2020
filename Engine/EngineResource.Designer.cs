@@ -61,6 +61,15 @@ namespace Engine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Engine run error message =.
+        /// </summary>
+        internal static string EngineErrorMessagePrefix {
+            get {
+                return ResourceManager.GetString("EngineErrorMessagePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Usage : Engine.exe \&quot;the path of test json file\&quot; ...
         ///        You may input multiple test json files
         ///        For example: Engine.exe .\\files\\test1.json .\\files\\test2.json.
@@ -72,11 +81,110 @@ namespace Engine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fail to close test process..
+        /// </summary>
+        internal static string FailClosePrefix {
+            get {
+                return ResourceManager.GetString("FailClosePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; doesn&apos;t exist..
+        /// </summary>
+        internal static string FileNotExist {
+            get {
+                return ResourceManager.GetString("FileNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The final test result is FAILED!.
+        /// </summary>
+        internal static string FinalResultFailed {
+            get {
+                return ResourceManager.GetString("FinalResultFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The final test result is PASS!.
+        /// </summary>
+        internal static string FinalResultPass {
+            get {
+                return ResourceManager.GetString("FinalResultPass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No input file. Engine stops..
         /// </summary>
         internal static string NoInputFile {
             get {
                 return ResourceManager.GetString("NoInputFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; test doesn&apos;t contain any test step..
+        /// </summary>
+        internal static string NoTestStep {
+            get {
+                return ResourceManager.GetString("NoTestStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; is done. The result is {1}..
+        /// </summary>
+        internal static string RunTestFinalMessage {
+            get {
+                return ResourceManager.GetString("RunTestFinalMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running end-to-end test - {0}.
+        /// </summary>
+        internal static string RunTestHeaderMessage {
+            get {
+                return ResourceManager.GetString("RunTestHeaderMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The program to test ({0}) is closed..
+        /// </summary>
+        internal static string TestProgramClosed {
+            get {
+                return ResourceManager.GetString("TestProgramClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The program to test ({0}) fails to launch..
+        /// </summary>
+        internal static string TestProgramFailedLaunch {
+            get {
+                return ResourceManager.GetString("TestProgramFailedLaunch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The program to test ({0}) is launched..
+        /// </summary>
+        internal static string TestProgramLaunched {
+            get {
+                return ResourceManager.GetString("TestProgramLaunched", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This test has {0} test step(s)..
+        /// </summary>
+        internal static string TestStepCountMessage {
+            get {
+                return ResourceManager.GetString("TestStepCountMessage", resourceCulture);
             }
         }
     }

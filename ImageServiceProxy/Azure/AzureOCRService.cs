@@ -18,14 +18,13 @@ namespace ImageServiceProxy.Azure
         private const string _providerName = "Azure";
         private readonly IComputer _computer;
         private readonly IOCRResultTextFinder _textFinder;
-        private readonly IOpenCVService _opencvService;
         private readonly ILogger _logger;
         private readonly IEngineConfig _config;
         private const string _artifactsFolderConfigKey = "ArtifactsFolder";
 
         public AzureOCRService(IComputer computer,
                                IOCRResultTextFinder textFinder,
-                               IOpenCVService opencvService,
+                               IOpenCVSUtils opencvService,
                                string serviceUrl,
                                string serviceKey,
                                ILogger logger,
@@ -33,7 +32,7 @@ namespace ImageServiceProxy.Azure
         {
             _computer = computer;
             _textFinder = textFinder;
-            _opencvService = opencvService;
+            OpenCVUtils = opencvService;
             _azureOCRUrl = serviceUrl;
             _azureOCRKey = serviceKey;
             _logger = logger;
@@ -41,6 +40,8 @@ namespace ImageServiceProxy.Azure
         }
 
         public string ProviderName => _providerName;
+
+        public IOpenCVSUtils OpenCVUtils { get; }
 
         private async Task<string> GetOCRJsonResultAsync(string imageFile)
         {
@@ -137,7 +138,7 @@ namespace ImageServiceProxy.Azure
 
             if (_textFinder.TrySearchText(textToSearch, jsonResult, _computer.Screen, searchArea, out IScreenArea area))
             {
-                _opencvService.DrawRedRectangle(imageFile, area.Left, area.Top, area.Width, area.Height);
+                OpenCVUtils.DrawRedRectangle(imageFile, area.Left, area.Top, area.Width, area.Height);
                 return area;
             }
 
@@ -152,7 +153,7 @@ namespace ImageServiceProxy.Azure
 
                 // put message on image
                 string message = string.Format(ServiceResource.TextNotFoundInJsonResult, textToSearch, searchArea, ocrFailFileName);
-                _opencvService.PutText(imageFile, 1, _computer.Screen.Height / 2, message);
+                OpenCVUtils.PutText(imageFile, 1, _computer.Screen.Height / 2, message);
                 _logger.WriteError(message);
             }
             catch
@@ -163,7 +164,7 @@ namespace ImageServiceProxy.Azure
 
         public (double, int, int)? TemplateMatch(byte[] search, byte[] template)
         {
-            return _opencvService.TemplateMatch(search, template);
+            return OpenCVUtils.TemplateMatch(search, template);
         }
     }
 }

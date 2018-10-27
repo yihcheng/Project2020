@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ImageServiceProxy
 {
-    internal class OpenCVService : IOpenCVService
+    public class OpenCVService : IOpenCVSUtils
     {
         public OpenCVService()
         {

@@ -4,6 +4,7 @@
   "LastUpdated": "2018-07-01 13:14",
   "Skip": "false",
   "ProgramToLaunch": "notepad.exe",
+  "IsLaunchProgramMaximized": "true",
   "Steps": [
     {
       "Target": "text",
@@ -31,7 +32,6 @@
       "Waiting": "2",
       "FailureReport": "true"
     },
-
     {
       "Target": "text",
       "Search": "Open",

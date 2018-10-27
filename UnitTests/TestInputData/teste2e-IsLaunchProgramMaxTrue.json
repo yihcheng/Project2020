@@ -1,0 +1,28 @@
+﻿{
+  "FullName": "dummy-test",
+  "ShortName": "dummytest",
+  "LastUpdated": "2018-07-01 13:14",
+  "Skip": "false",
+  "ProgramToLaunch": "mspaint.exe",
+  "MakeLaunchedProgramMaximized": "true",
+  "Steps": [
+    {
+      "Target": "image",
+      "Search": ".\\images\\dummytest2-1.jpg",
+      "ScreenArea": "top",
+      "Action": "mouse.click",
+      "Waiting": "2",
+      "FailureReport": "true",
+	  "Retry": "2"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": "",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "email",
+      "Waiting": "2",
+      "FailureReport": "true"
+    }
+  ]
+}

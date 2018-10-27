@@ -8,31 +8,29 @@ namespace Engine
 {
     internal class Engine : IEngine
     {
-        // TODO: should not hard-code it. It should go to config file.
         private static ITestE2EReader _testE2EReader;
         private static IComputer _computer;
-        private static IReadOnlyList<ICloudOCRService> _imageServices;
+        private static IReadOnlyList<ICloudOCRService> _ocrServices;
         private static IEngineConfig _engineConfig;
         private static ILogger _logger;
 
-        public Engine(ITestE2EReader reader, IComputer computer, IReadOnlyList<ICloudOCRService> services, IEngineConfig config, ILogger logger)
+        public Engine(ITestE2EReader reader, IComputer computer, IReadOnlyList<ICloudOCRService> ocrServices, IEngineConfig engineConfig, ILogger logger)
         {
             _testE2EReader = reader;
             _computer = computer;
-            _imageServices = services;
-            _engineConfig = config;
+            _ocrServices = ocrServices;
+            _engineConfig = engineConfig;
             _logger = logger;
+
             // ensure environment
-            EngineEnvironment.EnsureEnvironment(config);
+            EngineEnvironment.EnsureEnvironment(engineConfig);
         }
 
         public async Task RunAsync(string[] e2eFiles = null)
         {
             if (e2eFiles == null || e2eFiles.Length == 0)
             {
-                _logger.WriteInfo(EngineResource.NoInputFile);
-                _logger.WriteInfo("");
-                _logger.WriteInfo(EngineResource.EngineMessage);
+                PrintHelpMessage();
                 return;
             }
 
@@ -40,14 +38,9 @@ namespace Engine
 
             for (int i = 0; i < e2eFiles.Length; i++)
             {
-                if (string.IsNullOrEmpty(e2eFiles[i]))
+                if (string.IsNullOrEmpty(e2eFiles[i]) || !File.Exists(e2eFiles[i]))
                 {
-                    continue;
-                }
-
-                if (!File.Exists(e2eFiles[i]))
-                {
-                    _logger.WriteInfo($"{e2eFiles[i]} doesn't exist.");
+                    _logger.WriteError(string.Format(EngineResource.FileNotExist, e2eFiles[i]));
                     continue;
                 }
 
@@ -60,32 +53,39 @@ namespace Engine
                         continue;
                     }
 
-                    _logger.WriteInfo($"Running E2E test - {teste2e.FullName}");
+                    _logger.WriteInfo(string.Format(EngineResource.RunTestHeaderMessage, teste2e.FullName));
 
-                    TestE2EExecutor executor = new TestE2EExecutor(teste2e, _computer, _imageServices, _logger, _engineConfig);
+                    TestE2EExecutor executor = new TestE2EExecutor(teste2e, _computer, _ocrServices, _logger, _engineConfig);
                     bool result = await executor.ExecuteAsync().ConfigureAwait(false);
-                    finalResult = finalResult && result;
+                    finalResult &= result;
 
-                    _logger.WriteInfo($"{teste2e.FullName} is done. The result is {result}");
+                    _logger.WriteInfo(string.Format(EngineResource.RunTestFinalMessage, teste2e.FullName, result));
                 }
                 catch (Exception ex)
                 {
-                    _logger.WriteError("Engine run error message = " + ex);
+                    _logger.WriteError($"{EngineResource.EngineErrorMessagePrefix} {ex}");
                 }
             }
 
             DisplayFinalResult(finalResult);
         }
 
+        private static void PrintHelpMessage()
+        {
+            _logger.WriteInfo(EngineResource.NoInputFile);
+            _logger.WriteInfo("");
+            _logger.WriteInfo(EngineResource.EngineMessage);
+        }
+
         private void DisplayFinalResult(bool finalResult)
         {
             if (finalResult)
             {
-                _computer.DisplayMessageBox("The final test result is PASS!");
+                _computer.DisplayMessageBox(EngineResource.FinalResultPass);
             }
             else
             {
-                _computer.DisplayMessageBox("The final test result is FAILED!");
+                _computer.DisplayMessageBox(EngineResource.FinalResultFailed);
             }
         }
     }

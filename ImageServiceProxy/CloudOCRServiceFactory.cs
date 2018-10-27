@@ -7,7 +7,7 @@ namespace ImageServiceProxy
     public static class CloudOCRServiceFactory
     {
         private static ICloudOCRService _azureService;
-        private static IOpenCVService _opencvService;
+        private static IOpenCVSUtils _opencvService;
 
         public static ICloudOCRService Create(string providerName, string serviceUrl, string serviceKey, IComputer computer, ILogger logger, IEngineConfig config)
         {
@@ -37,7 +37,7 @@ namespace ImageServiceProxy
             return _azureService;
         }
 
-        private static IOpenCVService GetOpenCVService()
+        private static IOpenCVSUtils GetOpenCVService()
         {
             return _opencvService ?? (_opencvService = new OpenCVService());
         }

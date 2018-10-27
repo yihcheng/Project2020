@@ -9,6 +9,7 @@ namespace Abstractions
         string ShortName { get; }
         bool Skip { get; }
         string ProgramToLaunch { get; }
+        bool MakeLaunchedProgramMaximized { get; }
         IReadOnlyList<ITestStep> Steps { get; }
     }
 

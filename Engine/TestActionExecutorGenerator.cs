@@ -13,9 +13,10 @@ namespace Engine
 
             if (action.StartsWith("mouse."))
             {
-                return new MouseAction(computer.Mouse, action, location, logger);
+                return new MouseAction(computer.Mouse, action, location, logger, computer.Screen.Width, computer.Screen.Height);
             }
-            else if (action.StartsWith("keyboard."))
+
+            if (action.StartsWith("keyboard."))
             {
                 return new KeyboardAction(computer.Keyboard, action, actionArg, location, logger);
             }

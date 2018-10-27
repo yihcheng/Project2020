@@ -17,26 +17,41 @@ namespace TestInputDataReader
 
         public ITestE2E ReadFile(string file)
         {
-            ITestE2E e2e = null;
+            TestE2E e2e = null;
 
             try
             {
                 string fileContent = File.ReadAllText(file);
                 JObject jObj = JObject.Parse(fileContent);
+                string fullName = jObj["FullName"]?.Value<string>();
+                string shortName = jObj["ShortName"]?.Value<string>();
+                string programToLaunch = jObj["ProgramToLaunch"].Value<string>();
 
-                // TODO : parse should fail if some major element is missing
+                e2e = new TestE2E(fullName, shortName, programToLaunch);
 
-                JArray jSteps = (JArray)jObj["Steps"];
-                IReadOnlyList<ITestStep> steps = ParseTestSteps(jSteps);
+                const string skipKey = "Skip";
+                const string stepKey = "Steps";
+                const string isMaxKey = "MakeLaunchedProgramMaximized";
 
-                e2e = new TestE2E()
+                if (jObj[skipKey] != null)
                 {
-                    FullName = jObj["FullName"].Value<string>(),
-                    ShortName = jObj["ShortName"].Value<string>(),
-                    Skip = jObj["Skip"].Value<bool>(),
-                    ProgramToLaunch = jObj["ProgramToLaunch"].Value<string>(),
-                    Steps = steps
-                };
+                    e2e.Skip = jObj[skipKey].Value<bool>();
+                }
+
+                if (jObj[stepKey] == null)
+                {
+                    e2e.Steps = new List<ITestStep>();
+                }
+                else
+                {
+                    JArray jSteps = (JArray)jObj[stepKey];
+                    e2e.Steps = ParseTestSteps(jSteps);
+                }
+
+                if (jObj[isMaxKey] != null)
+                {
+                    e2e.MakeLaunchedProgramMaximized = jObj[isMaxKey].Value<bool>();
+                }
             }
             catch (Exception ex)
             {
@@ -48,11 +63,11 @@ namespace TestInputDataReader
 
         internal IReadOnlyList<ITestStep> ParseTestSteps(JArray jActions)
         {
-            List<ITestStep> actions = new List<ITestStep>();
+            List<ITestStep> steps = new List<ITestStep>();
 
             for (int actionId = 0; actionId < jActions.Count; actionId++)
             {
-                TestStep action = new TestStep
+                TestStep step = new TestStep
                 {
                     Target = jActions[actionId]["Target"].Value<string>(),
                     Search = jActions[actionId]["Search"].Value<string>(),
@@ -62,14 +77,14 @@ namespace TestInputDataReader
 
                 if (jActions[actionId]["Action"] != null)
                 {
-                    action.Action = jActions[actionId]["Action"].Value<string>();
+                    step.Action = jActions[actionId]["Action"].Value<string>();
                 }
 
                 // ActionArgument may be a value from environment variable
                 if (jActions[actionId]["ActionArgument"] != null 
                     && !string.IsNullOrEmpty(jActions[actionId]["ActionArgument"].Value<string>()))
                 {
-                    action.ActionArgument = Environment.ExpandEnvironmentVariables(jActions[actionId]["ActionArgument"].Value<string>());
+                    step.ActionArgument = Environment.ExpandEnvironmentVariables(jActions[actionId]["ActionArgument"].Value<string>());
                 }
 
                 // it's reasonable to reject a waiting time larger than 1000 seconds
@@ -78,7 +93,7 @@ namespace TestInputDataReader
                     && waiting > 0
                     && waiting < 1000)
                 {
-                    action.WaitingSecond = waiting;
+                    step.WaitingSecond = waiting;
                 }
 
                 // it's reasonable to reject a retry number larger than 10
@@ -87,13 +102,13 @@ namespace TestInputDataReader
                     && retry > 0
                     && retry < 11)
                 {
-                    action.Retry = retry;
+                    step.Retry = retry;
                 }
 
-                actions.Add(action);
+                steps.Add(step);
             }
 
-            return actions;
+            return steps;
         }
 
         private ScreenSearchArea GetScreenSearchArea(string input)

@@ -69,6 +69,7 @@ namespace UnitTests.TestInputData
 
         [Theory]
         [InlineData(".\\TestInputData\\teste2e-environmentvariable.json", "var1", "value1")]
+        [InlineData(".\\TestInputData\\teste2e-1.json", "var1", null)]
         public void EnvironmentVariableTest(string e2eFile, string environmentName, string expectedValue)
         {
             string originalValue = Environment.GetEnvironmentVariable(environmentName);
@@ -80,8 +81,33 @@ namespace UnitTests.TestInputData
             // according to this e2e file, get the first step and get its ActionArgument
             Assert.Equal(expectedValue, e2e.Steps[0].ActionArgument);
 
-            // revert
+            // revert environment variable
             Environment.SetEnvironmentVariable(environmentName, originalValue);
+        }
+
+        [Theory]
+        [InlineData(".\\TestInputData\\teste2e-IsLaunchProgramMaxTrue.json", true)]
+        [InlineData(".\\TestInputData\\teste2e-IsLaunchProgramMaxFalse.json", false)]
+        [InlineData(".\\TestInputData\\teste2e-1.json", true)]
+        public void IsLaunchedProgramMaximizedTest(string e2eFile, bool expectedValue)
+        {
+            string file = Path.Combine(Environment.CurrentDirectory, e2eFile);
+            TestE2EReader reader = new TestE2EReader(CreateLoggerMock().Object);
+            ITestE2E e2e = reader.ReadFile(file);
+
+            Assert.Equal(expectedValue, e2e.MakeLaunchedProgramMaximized);
+        }
+
+        [Theory]
+        [InlineData(".\\TestInputData\\teste2e-NoStep.json", 0)]
+        [InlineData(".\\TestInputData\\teste2e-1.json", 3)]
+        public void TestStepCountTest(string e2eFile, int expectedCount)
+        {
+            string file = Path.Combine(Environment.CurrentDirectory, e2eFile);
+            TestE2EReader reader = new TestE2EReader(CreateLoggerMock().Object);
+            ITestE2E e2e = reader.ReadFile(file);
+
+            Assert.Equal(expectedCount, e2e.Steps.Count);
         }
     }
 }

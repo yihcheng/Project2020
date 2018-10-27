@@ -8,16 +8,16 @@ namespace Engine
 {
     internal class TestStepForImage : TestStepForBase, ITestStepExecutor
     {
-        private readonly IReadOnlyList<ICloudOCRService> _services;
+        private readonly IReadOnlyList<ICloudOCRService> _ocrServices;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
         private readonly ILogger _logger;
         private const string _targetKeyword = "image";
 
-        public TestStepForImage(IReadOnlyList<ICloudOCRService> services, IComputer computer, ITestStep action, ILogger logger, IEngineConfig config)
+        public TestStepForImage(IReadOnlyList<ICloudOCRService> ocrServices, IComputer computer, ITestStep action, ILogger logger, IEngineConfig config)
             : base(config)
         {
-            _services = services;
+            _ocrServices = ocrServices;
             _computer = computer;
             _step = action;
             _logger = logger;
@@ -34,7 +34,7 @@ namespace Engine
 
             if (!File.Exists(_step.Search))
             {
-                _logger.WriteError($"{_step.Search} is not found");
+                _logger.WriteError($"\"{_step.Search}\" is not found");
                 return false;
             }
 
@@ -46,22 +46,22 @@ namespace Engine
             byte[] fullScreenFileBytes = File.ReadAllBytes(fullScreenFile);
             (double confidence, int X, int Y)? result = null;
 
-            if (_services?.Count > 0)
+            if (_ocrServices?.Count > 0)
             {
                 // TemplateMatch is identical in every image service
-                result = _services[0].TemplateMatch(searchFileBytes, fullScreenFileBytes);
+                result = _ocrServices[0].OpenCVUtils.TemplateMatch(searchFileBytes, fullScreenFileBytes);
             }
 
             // reject small confidence
             if (result == null)
             {
-                _logger.WriteError($"templateMatchResult is null");
+                _logger.WriteError($"TemplateMatch result is null");
                 return false;
             }
 
             if (result.Value.confidence < 0.9)
             {
-                _logger.WriteError($"templateMatchResult confidence is less 0.9 (actual:{result.Value.confidence})");
+                _logger.WriteError($"templateMatch result confidence is less 0.9 (actual:{result.Value.confidence})");
                 return false;
             }
 

@@ -91,7 +91,7 @@
     <Compile Include="TestStepForActionOnly.cs" />
     <Compile Include="TestStepForBase.cs" />
     <Compile Include="TestStepForImage.cs" />
-    <Compile Include="ICloudOCRServiceProvider.cs" />
+    <Compile Include="CloudOCRServiceProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestE2EExecutor.cs" />

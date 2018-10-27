@@ -5,8 +5,14 @@ namespace TestInputDataReader
 {
     public class TestE2E : ITestE2E
     {
-        public TestE2E()
+        public TestE2E(string fullName, string shortName, string programToLaunch)
         {
+            FullName = fullName;
+            ShortName = shortName;
+            ProgramToLaunch = programToLaunch;
+
+            // default
+            MakeLaunchedProgramMaximized = true;
         }
 
         public string FullName { get; set; }
@@ -18,5 +24,7 @@ namespace TestInputDataReader
         public string ProgramToLaunch { get; set; }
 
         public IReadOnlyList<ITestStep> Steps { get; set; }
+
+        public bool MakeLaunchedProgramMaximized { get; set; }
     }
 }

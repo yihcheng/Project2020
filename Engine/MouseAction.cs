@@ -10,13 +10,17 @@ namespace Engine
         private readonly string _action;
         private readonly (int X, int Y) _location;
         private readonly ILogger _logger;
+        private readonly int _screenWidth;
+        private readonly int _screenHeight;
 
-        public MouseAction(IMouse mouse, string action, (int X, int Y) location, ILogger logger)
+        public MouseAction(IMouse mouse, string action, (int X, int Y) location, ILogger logger, int width, int height)
         {
             _mouse = mouse;
             _action = action;
             _location = location;
             _logger = logger;
+            _screenWidth = width;
+            _screenHeight = height;
         }
 
         public void Execute()
@@ -41,12 +45,12 @@ namespace Engine
             {
                 case "click":
                     _mouse.MoveTo(location.X, location.Y);
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                     _mouse.Click(location.X, location.Y);
                     break;
                 case "doubleclick":
                     _mouse.MoveTo(location.X, location.Y);
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                     _mouse.DoubleClick(location.X, location.Y);
                     break;
                 case "moveto":
@@ -54,14 +58,13 @@ namespace Engine
                     break;
                 case "rightclick":
                     _mouse.MoveTo(location.X, location.Y);
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                     _mouse.RightClick(location.X, location.Y);
                     break;
             }
 
             Thread.Sleep(500);
-            // TODO: this should go to down-right corner of screen
-            _mouse.MoveTo(0, 200);
+            _mouse.MoveTo(_screenWidth, _screenHeight);
         }
     }
 }

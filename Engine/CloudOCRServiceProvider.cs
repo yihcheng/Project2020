@@ -4,7 +4,7 @@ using ImageServiceProxy;
 
 namespace Engine
 {
-    internal static class ICloudOCRServiceProvider
+    internal static class CloudOCRServiceProvider
     {
         public static IReadOnlyList<ICloudOCRService> GetCloudOCRServices(IComputer computer, IEngineConfig config, ILogger logger)
         {
