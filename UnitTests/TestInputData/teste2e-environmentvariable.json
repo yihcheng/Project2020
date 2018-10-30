@@ -8,7 +8,7 @@
     {
       "Target": "",
       "Search": "",
-      "ScreenArea": "",
+      "ScreenArea": [""],
       "Action": "keyboard.sendkeys",
       "ActionArgument": "%var1%",
       "Waiting": "2",

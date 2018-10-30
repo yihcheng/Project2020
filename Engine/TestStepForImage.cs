@@ -8,13 +8,13 @@ namespace Engine
 {
     internal class TestStepForImage : TestStepForBase, ITestStepExecutor
     {
-        private readonly IReadOnlyList<ICloudOCRService> _ocrServices;
+        private readonly System.Collections.Generic.IReadOnlyList<ICloudOCRService> _ocrServices;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
         private readonly ILogger _logger;
         private const string _targetKeyword = "image";
 
-        public TestStepForImage(IReadOnlyList<ICloudOCRService> ocrServices, IComputer computer, ITestStep action, ILogger logger, IEngineConfig config)
+        public TestStepForImage(System.Collections.Generic.IReadOnlyList<ICloudOCRService> ocrServices, IComputer computer, ITestStep action, ILogger logger, IEngineConfig config)
             : base(config)
         {
             _ocrServices = ocrServices;
@@ -66,7 +66,17 @@ namespace Engine
             }
 
             // check screen area
-            if (!_computer.Screen.IsSearchAreaMatch(_step.SearchArea, (result.Value.X, result.Value.Y)))
+            bool areaFound = false;
+
+            foreach (ScreenSearchArea area in _step.SearchArea)
+            {
+                if (_computer.Screen.IsSearchAreaMatch(area, (result.Value.X, result.Value.Y)))
+                {
+                    areaFound = true;
+                }
+            }
+
+            if (!areaFound)
             {
                 _logger.WriteError("Target is not found in selected search area");
                 return false;

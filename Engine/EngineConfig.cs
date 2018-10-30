@@ -9,7 +9,7 @@ namespace Engine
     internal class EngineConfig : IEngineConfig
     {
         private Dictionary<string, string> _dataDict;
-        private IReadOnlyList<IOCRProviderConfig> _ocrProviders;
+        private System.Collections.Generic.IReadOnlyList<IOCRProviderConfig> _ocrProviders;
         private const string _ocrProviderConfigKey = "OCRProviders";
 
         public EngineConfig(string configFile)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -114,7 +115,7 @@ namespace ImageServiceProxy.Azure
             return "";
         }
 
-        public async Task<IScreenArea> GetOCRResultAsync(string imageFile, string textToSearch, ScreenSearchArea searchArea)
+        public async Task<IScreenArea> GetOCRResultAsync(string imageFile, string textToSearch, IReadOnlyList<ScreenSearchArea> searchAreas)
         {
             if (string.IsNullOrEmpty(imageFile) || string.IsNullOrEmpty(textToSearch))
             {
@@ -136,12 +137,16 @@ namespace ImageServiceProxy.Azure
                 return null;
             }
 
-            if (_textFinder.TrySearchText(textToSearch, jsonResult, _computer.Screen, searchArea, out IScreenArea area))
+            foreach (ScreenSearchArea searchArea in searchAreas)
             {
-                OpenCVUtils.DrawRedRectangle(imageFile, area.Left, area.Top, area.Width, area.Height);
-                return area;
+                if (_textFinder.TrySearchText(textToSearch, jsonResult, _computer.Screen, searchArea, out IScreenArea area))
+                {
+                    OpenCVUtils.DrawRedRectangle(imageFile, area.Left, area.Top, area.Width, area.Height);
+                    return area;
+                }
             }
-
+          
+            // write down info for debugging records
             try
             {
                 string ocrFailFileName = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}_{_providerName}_TextNotFound_[{textToSearch}].txt";
@@ -152,12 +157,13 @@ namespace ImageServiceProxy.Azure
                 File.WriteAllText(ocrFailFilePath, jsonResult);
 
                 // put message on image
-                string message = string.Format(ServiceResource.TextNotFoundInJsonResult, textToSearch, searchArea, ocrFailFileName);
+                string message = string.Format(ServiceResource.TextNotFoundInJsonResult, textToSearch, searchAreas, ocrFailFileName);
                 OpenCVUtils.PutText(imageFile, 1, _computer.Screen.Height / 2, message);
                 _logger.WriteError(message);
             }
             catch
-            { }
+            {
+            }
 
             return null;
         }

@@ -6,7 +6,7 @@ namespace Engine
 {
     internal static class TestStepExecutorGenerator
     {
-        public static ITestStepExecutor Generate(ITestStep testStep, IComputer computer, IReadOnlyList<ICloudOCRService> imageSerivces, ILogger logger, IEngineConfig config)
+        public static ITestStepExecutor Generate(ITestStep testStep, IComputer computer, System.Collections.Generic.IReadOnlyList<ICloudOCRService> imageSerivces, ILogger logger, IEngineConfig config)
         {
             if (string.Equals(testStep.Target, "image", StringComparison.OrdinalIgnoreCase))
             {

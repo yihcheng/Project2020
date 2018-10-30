@@ -8,7 +8,7 @@
     {
       "Target": "text",
       "Search": "enter web address",
-      "ScreenArea": "top-left",
+      "ScreenArea": ["top-left"],
       "Action": "mouse.click",
       "Waiting": "1",
       "FailureReport": "true"
@@ -16,7 +16,7 @@
     {
       "Target": "",
       "Search": "",
-      "ScreenArea": "",
+      "ScreenArea": [],
       "Action": "keyboard.sendkeys",
       "ActionArgument": "www.hotmail.com",
       "Waiting": "1",
@@ -25,7 +25,7 @@
     {
       "Target": "",
       "Search": "",
-      "ScreenArea": "",
+      "ScreenArea": [],
       "Action": "keyboard.sendkeys",
       "ActionArgument": "{Enter}",
       "Waiting": "3",
@@ -34,7 +34,7 @@
     {
       "Target": "text",
       "Search": "Sign in",
-      "ScreenArea": "center",
+      "ScreenArea":[ "center"],
       "Action": "mouse.click",
       "Waiting": "3",
       "FailureReport": "true"
@@ -42,7 +42,7 @@
     {
       "Target": "text",
       "Search": "Microsoft Account",
-      "ScreenArea": "top",
+      "ScreenArea": ["top"],
       "Action": "mouse.click",
       "Waiting": "3",
       "FailureReport": "true"
@@ -50,7 +50,7 @@
     {
       "Target": "text",
       "Search": "phone, or Skype",
-      "ScreenArea": "center",
+      "ScreenArea": ["center"],
       "Action": "mouse.click",
       "Waiting": "1",
       "FailureReport": "true"
@@ -58,7 +58,7 @@
     {
       "Target": "",
       "Search": "",
-      "ScreenArea": "",
+      "ScreenArea": [],
       "Action": "keyboard.sendkeys",
       "ActionArgument": "xxxxxxx@hotmail.com",
       "Waiting": "2",
@@ -67,7 +67,7 @@
     {
       "Target": "text",
       "Search": "Next",
-      "ScreenArea": "center",
+      "ScreenArea": ["center"],
       "Action": "mouse.click",
       "Waiting": "2",
       "FailureReport": "true"
@@ -75,7 +75,7 @@
     {
       "Target": "",
       "Search": "",
-      "ScreenArea": "",
+      "ScreenArea": [],
       "Action": "keyboard.sendkeys",
       "ActionArgument": "xxxxxxx",
       "Waiting": "3",
@@ -84,7 +84,7 @@
     {
       "Target": "image",
       "Search": ".\\images\\signin.jpg",
-      "ScreenArea": "center",
+      "ScreenArea": ["center"],
       "Action": "mouse.click",
       "Waiting": "3",
       "FailureReport": "true"
@@ -92,7 +92,7 @@
     {
       "Target": "text",
       "Search": "Outlook Mail",
-      "ScreenArea": "top-left",
+      "ScreenArea": ["top-left"],
       "Waiting": "3",
       "FailureReport": "true"
     }

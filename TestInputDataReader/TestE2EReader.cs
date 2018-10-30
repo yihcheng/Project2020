@@ -71,9 +71,17 @@ namespace TestInputDataReader
                 {
                     Target = jActions[actionId]["Target"].Value<string>(),
                     Search = jActions[actionId]["Search"].Value<string>(),
-                    SearchArea = GetScreenSearchArea(jActions[actionId]["ScreenArea"].Value<string>()),
                     FailureReport = jActions[actionId]["FailureReport"].Value<bool>()
                 };
+
+                if (jActions[actionId]["ScreenArea"] == null)
+                {
+                   step.SearchArea = new List<ScreenSearchArea>();
+                }
+                else
+                {
+                    step.SearchArea = GetScreenSearchArea((JArray)jActions[actionId]["ScreenArea"]);
+                }
 
                 if (jActions[actionId]["Action"] != null)
                 {
@@ -81,7 +89,7 @@ namespace TestInputDataReader
                 }
 
                 // ActionArgument may be a value from environment variable
-                if (jActions[actionId]["ActionArgument"] != null 
+                if (jActions[actionId]["ActionArgument"] != null
                     && !string.IsNullOrEmpty(jActions[actionId]["ActionArgument"].Value<string>()))
                 {
                     step.ActionArgument = Environment.ExpandEnvironmentVariables(jActions[actionId]["ActionArgument"].Value<string>());
@@ -111,13 +119,25 @@ namespace TestInputDataReader
             return steps;
         }
 
-        private ScreenSearchArea GetScreenSearchArea(string input)
+        private static IReadOnlyList<ScreenSearchArea> GetScreenSearchArea(JArray inputArray)
         {
-            if (string.IsNullOrEmpty(input))
+            List<ScreenSearchArea> result = new List<ScreenSearchArea>();
+
+            if (inputArray == null || inputArray.Count == 0)
             {
-                return ScreenSearchArea.FullScreen;
+                return result;
             }
 
+            for (int i = 0; i < inputArray.Count; i++)
+            {
+                result.Add(GetScreenAreaValue(inputArray[i].Value<string>()));
+            }
+
+            return result;
+        }
+
+        private static ScreenSearchArea GetScreenAreaValue(string input)
+        {
             input = input.ToLower();
 
             switch (input)
@@ -130,12 +150,16 @@ namespace TestInputDataReader
                     return ScreenSearchArea.Top;
                 case "down":
                     return ScreenSearchArea.Down;
+                case "right-top":
                 case "top-right":
                     return ScreenSearchArea.TopRight;
+                case "left-top":
                 case "top-left":
                     return ScreenSearchArea.TopLeft;
+                case "right-down":
                 case "down-right":
                     return ScreenSearchArea.DownRight;
+                case "left-down":
                 case "down-left":
                     return ScreenSearchArea.DownLeft;
                 case "center":

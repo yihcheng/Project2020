@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Abstractions;
 using Moq;
@@ -10,7 +11,7 @@ namespace UnitTests.TestInputData
     public class TestE2ETest
     {
         [Theory]
-        [InlineData(".\\TestInputData\\teste2e-1.json", "dummytest1", false, "mspaint.exe", 3)]
+        [InlineData(".\\TestInputData\\teste2e-1.json", "dummytest1", false, "mspaint.exe", 5)]
         [InlineData(".\\TestInputData\\teste2e-2.json", "dummytest2", true, "mspaint2.exe", 2)]
         public void ParseSuccessTest(string e2eFile,
                                      string expectedShortName,
@@ -100,7 +101,7 @@ namespace UnitTests.TestInputData
 
         [Theory]
         [InlineData(".\\TestInputData\\teste2e-NoStep.json", 0)]
-        [InlineData(".\\TestInputData\\teste2e-1.json", 3)]
+        [InlineData(".\\TestInputData\\teste2e-1.json", 5)]
         public void TestStepCountTest(string e2eFile, int expectedCount)
         {
             string file = Path.Combine(Environment.CurrentDirectory, e2eFile);
@@ -109,5 +110,30 @@ namespace UnitTests.TestInputData
 
             Assert.Equal(expectedCount, e2e.Steps.Count);
         }
+
+        [Theory]
+        [MemberData(nameof(ScreenAreaTestData))]
+        public void SearchScreenAreaTest(string e2eFile, int stepIndex, List<ScreenSearchArea> expectedAreas)
+        {
+            string file = Path.Combine(Environment.CurrentDirectory, e2eFile);
+            TestE2EReader reader = new TestE2EReader(CreateLoggerMock().Object);
+            ITestE2E e2e = reader.ReadFile(file);
+
+            IReadOnlyList<ScreenSearchArea> actualAreas = e2e.Steps[stepIndex].SearchArea;
+            Assert.Equal(expectedAreas, actualAreas);
+        }
+
+        public static IEnumerable<object[]> ScreenAreaTestData =>
+           new List<object[]>
+           {
+               new object[] { ".\\TestInputData\\teste2e-1.json", 0, new List<ScreenSearchArea>() { ScreenSearchArea.Top } },
+               new object[] { ".\\TestInputData\\teste2e-1.json", 1, new List<ScreenSearchArea>() { ScreenSearchArea.FullScreen } },
+               new object[] { ".\\TestInputData\\teste2e-1.json", 2, new List<ScreenSearchArea>() { ScreenSearchArea.Center } },
+               new object[] { ".\\TestInputData\\teste2e-1.json", 3, new List<ScreenSearchArea>() },
+               new object[] { ".\\TestInputData\\teste2e-1.json", 4, new List<ScreenSearchArea>() { ScreenSearchArea.Top,
+                                                                                                    ScreenSearchArea.Down,
+                                                                                                    ScreenSearchArea.DownRight,
+                                                                                                    ScreenSearchArea.TopLeft} },
+           };
     }
 }

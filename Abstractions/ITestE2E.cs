@@ -19,7 +19,7 @@ namespace Abstractions
         string Search { get; }
         string Action { get; }
         string ActionArgument { get; }
-        ScreenSearchArea SearchArea { get; }
+        IReadOnlyList<ScreenSearchArea> SearchArea { get; }
         int WaitingSecond { get; }
         bool FailureReport { get; }
         int Retry { get; }

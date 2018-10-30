@@ -8,7 +8,7 @@
     {
       "Target": "image",
       "Search": ".\\images\\dummytest2-1.jpg",
-      "ScreenArea": "top",
+      "ScreenArea": ["top"],
       "Action": "mouse.click",
       "Waiting": "2",
       "FailureReport": "true"
@@ -16,7 +16,7 @@
     {
       "Target": "text",
       "Search": "TextToSearch",
-      "ScreenArea": "down",
+      "ScreenArea": ["down"],
       "Action": "mouse.rightclick",
       "Waiting": "2",
       "FailureReport": "true"

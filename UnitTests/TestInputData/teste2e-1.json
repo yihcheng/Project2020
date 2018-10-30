@@ -8,7 +8,7 @@
     {
       "Target": "image",
       "Search": ".\\images\\dummytest2-1.jpg",
-      "ScreenArea": "top",
+      "ScreenArea": ["top" ],
       "Action": "mouse.click",
       "Waiting": "2",
       "FailureReport": "true",
@@ -17,7 +17,7 @@
     {
       "Target": "",
       "Search": "",
-      "ScreenArea": "",
+      "ScreenArea": [""],
       "Action": "keyboard.sendkeys",
       "ActionArgument": "email",
       "Waiting": "2",
@@ -26,7 +26,23 @@
     {
       "Target": "text",
       "Search": "OK",
-      "ScreenArea": "center",
+      "ScreenArea": ["center"],
+      "Action": "mouse.doubleclick",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "OK",
+      "ScreenArea": [],
+      "Action": "mouse.doubleclick",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "OK",
+      "ScreenArea": ["Top","Down","right-Down","Top-left"],
       "Action": "mouse.doubleclick",
       "Waiting": "2",
       "FailureReport": "true"

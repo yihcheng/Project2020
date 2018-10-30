@@ -7,13 +7,13 @@ namespace Engine
 {
     internal class TestStepForText : TestStepForBase, ITestStepExecutor
     {
-        private readonly IReadOnlyList<ICloudOCRService> _services;
+        private readonly System.Collections.Generic.IReadOnlyList<ICloudOCRService> _services;
         private readonly IComputer _computer;
         private readonly ITestStep _step;
         private readonly ILogger _logger;
         private const string _targetKeyword = "text";
 
-        public TestStepForText(IReadOnlyList<ICloudOCRService> services, IComputer computer, ITestStep step, ILogger logger, IEngineConfig config)
+        public TestStepForText(System.Collections.Generic.IReadOnlyList<ICloudOCRService> services, IComputer computer, ITestStep step, ILogger logger, IEngineConfig config)
             : base(config)
         {
             _services = services;

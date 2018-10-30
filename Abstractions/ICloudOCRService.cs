@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Abstractions
 {
@@ -6,7 +7,7 @@ namespace Abstractions
     {
         string ProviderName { get; }
         IOpenCVSUtils OpenCVUtils { get; }
-        Task<IScreenArea> GetOCRResultAsync(string imageFile, string textToSearch, ScreenSearchArea searchArea);
+        Task<IScreenArea> GetOCRResultAsync(string imageFile, string textToSearch, IReadOnlyList<ScreenSearchArea> searchAreas);
     }
 
     public interface IOpenCVSUtils

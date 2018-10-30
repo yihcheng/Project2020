@@ -8,7 +8,7 @@ namespace Engine
     {
         public static IReadOnlyList<ICloudOCRService> GetCloudOCRServices(IComputer computer, IEngineConfig config, ILogger logger)
         {
-            IReadOnlyList<IOCRProviderConfig> ocrProviders = config.GetOCRProviders();
+            System.Collections.Generic.IReadOnlyList<IOCRProviderConfig> ocrProviders = config.GetOCRProviders();
 
             if (ocrProviders == null || ocrProviders.Count == 0)
             {

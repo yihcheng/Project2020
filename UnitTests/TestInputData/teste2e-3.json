@@ -8,7 +8,7 @@
     {
       "Target": "image",
       "Search": ".\\images\\dummytest2-1.jpg",
-      "ScreenArea": "top",
+      "ScreenArea": ["top"],
       "Action": "mouse.click",
       "Waiting": "1000",
       "FailureReport": "true",
@@ -17,7 +17,7 @@
     {
       "Target": "",
       "Search": "",
-      "ScreenArea": "",
+      "ScreenArea": [""],
       "Action": "keyboard.sendkeys",
       "ActionArgument": "email",
       "Waiting": "-1",
