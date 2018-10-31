@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowsAPIHelper.cs" />
     <Compile Include="WindowsOS.cs" />
     <Compile Include="WindowsKeyboard.cs" />
     <Compile Include="WindowsMouse.cs" />

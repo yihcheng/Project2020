@@ -4,7 +4,6 @@
     {
         int Width { get; }
         int Height { get; }
-        byte[] CaptureScreenShot();
         void SaveFullScreenAsFile(string filePathToSave);
         bool IsSearchAreaMatch(ScreenSearchArea screenSearchArea, (int X, int Y) location);
     }

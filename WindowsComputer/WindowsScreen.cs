@@ -1,52 +1,35 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Windows.Forms;
 using Abstractions;
 
 namespace WindowsComputer
 {
     public class WindowsScreen : IScreen
     {
-        private byte[] _imgBytes;
         private readonly ImageFormat _imgFormat;
+        private static IntPtr fullscreen;
+        private static WindowsAPIHelper.Rect windowRect;
+
+        static WindowsScreen()
+        {
+            fullscreen = WindowsAPIHelper.GetDesktopWindow();
+            windowRect = new WindowsAPIHelper.Rect();
+            WindowsAPIHelper.GetWindowRect(fullscreen, ref windowRect);
+        }
 
         public WindowsScreen()
         {
-            // capture full screen, instead of WorkingArea
-            Width = Screen.PrimaryScreen.Bounds.Width;
-            Height = Screen.PrimaryScreen.Bounds.Height;
+            Width = windowRect.right - windowRect.left;
+            Height = windowRect.bottom - windowRect.top;
+
+            // default to JPG
             _imgFormat = ImageFormat.Jpeg;
         }
 
         public int Width { get; }
 
         public int Height { get; }
-
-        public byte[] CaptureScreenShot()
-        {
-            Bitmap bitmapImage;
-
-            try
-            {
-                bitmapImage = new Bitmap(Width, Height);
-                Size size = new Size(bitmapImage.Width, bitmapImage.Height);
-                Graphics graphics = Graphics.FromImage(bitmapImage);
-                graphics.CopyFromScreen(0, 0, 0, 0, size);
-                using (MemoryStream mstream = new MemoryStream())
-                {
-                    bitmapImage.Save(mstream, _imgFormat);
-                    _imgBytes = mstream.ToArray();
-                }
-            }
-            catch
-            {
-                // TODO: log ?
-            }
-            
-            return _imgBytes;
-        }
 
         public bool IsSearchAreaMatch(ScreenSearchArea screenSearchArea, (int X, int Y) location)
         {
@@ -92,19 +75,51 @@ namespace WindowsComputer
         {
             if (string.IsNullOrEmpty(filePathToSave))
             {
-                throw new ArgumentException();
+                // TODO : warning ?
+                return;
             }
 
-            byte[] screenShotBytes = CaptureScreenShot();
-
-            if (screenShotBytes?.Length > 0)
+            try
             {
-                using (MemoryStream mstream = new MemoryStream(_imgBytes))
-                {
-                    Bitmap bitmap = new Bitmap(mstream);
-                    bitmap.Save(filePathToSave, _imgFormat);
-                }
+                Image fullScreenShot = CaptureFullScreenShot();
+                fullScreenShot.Save(filePathToSave, _imgFormat);
             }
+            finally
+            { }
+        }
+
+        private Image CaptureFullScreenShot()
+        {
+            IntPtr fullscreen = WindowsAPIHelper.GetDesktopWindow();
+
+            // get te hDC of the target window
+            IntPtr hdcSrc = WindowsAPIHelper.GetWindowDC(fullscreen);
+            
+            // create a device context we can copy to
+            IntPtr hdcDest = WindowsAPIHelper.CreateCompatibleDC(hdcSrc);
+
+            // create a bitmap we can copy it to,
+            IntPtr hBitmap = WindowsAPIHelper.CreateCompatibleBitmap(hdcSrc, Width, Height);
+            
+            // select the bitmap object
+            IntPtr hOld = WindowsAPIHelper.SelectObject(hdcDest, hBitmap);
+            
+            // bitblt over
+            WindowsAPIHelper.BitBlt(hdcDest, 0, 0, Width, Height, hdcSrc, 0, 0, WindowsAPIHelper.SRCCOPY);
+            
+            // restore selection
+            WindowsAPIHelper.SelectObject(hdcDest, hOld);
+            
+            // clean up 
+            WindowsAPIHelper.DeleteDC(hdcDest);
+            WindowsAPIHelper.ReleaseDC(fullscreen, hdcSrc);
+
+            // get a .NET image object for it
+            Image img = Image.FromHbitmap(hBitmap);
+            // free up the Bitmap object
+            WindowsAPIHelper.DeleteObject(hBitmap);
+
+            return img;
         }
     }
 }
