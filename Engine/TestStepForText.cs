@@ -7,19 +7,18 @@ namespace Engine
 {
     internal class TestStepForText : TestStepForBase, ITestStepExecutor
     {
-        private readonly System.Collections.Generic.IReadOnlyList<ICloudOCRService> _services;
-        private readonly IComputer _computer;
         private readonly ITestStep _step;
-        private readonly ILogger _logger;
         private const string _targetKeyword = "text";
 
-        public TestStepForText(System.Collections.Generic.IReadOnlyList<ICloudOCRService> services, IComputer computer, ITestStep step, ILogger logger, IEngineConfig config)
-            : base(config)
+        public TestStepForText(IReadOnlyList<ICloudOCRService> ocrServices,
+                               IComputer computer,
+                               ITestStep step,
+                               ILogger logger,
+                               IEngineConfig config,
+                               IOpenCVSUtils openCVService)
+            : base(ocrServices, config, computer, logger, openCVService)
         {
-            _services = services;
-            _computer = computer;
             _step = step;
-            _logger = logger;
         }
 
         public async Task<bool> ExecuteAsync()
@@ -33,13 +32,13 @@ namespace Engine
 
             string filename = $".\\{GetArtifactFolderValue()}\\FullScreen-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
             FileUtility.EnsureParentFolder(filename);
-            _computer.Screen.SaveFullScreenAsFile(filename);
+            Computer.Screen.SaveFullScreenAsFile(filename);
             bool foundLocation = false;
             IScreenArea area = null;
 
-            for (int i = 0; i < _services.Count; i++)
+            for (int i = 0; i < OCRServices.Count; i++)
             {
-                area = await _services[i].GetOCRResultAsync(filename, _step.Search, _step.SearchArea).ConfigureAwait(false);
+                area = await OCRServices[i].GetOCRResultAsync(filename, _step.Search, _step.SearchArea).ConfigureAwait(false);
 
                 if (area != null)
                 {
@@ -50,21 +49,26 @@ namespace Engine
 
             if (!foundLocation || area == null)
             {
-                _logger.WriteError($"Text ({_step.Search}) is NOT found.");
+                Logger.WriteError(string.Format(EngineResource.SearchTextNotFound, _step.Search));
+                string message = string.Format(EngineResource.TextNotFoundInJsonResult, _step.Search);
+                OpenCVService.PutText(filename, 1, Computer.Screen.Height / 2, message);
                 return false;
             }
 
             (int X, int Y) = area.GetCentralPoint();
-            _logger.WriteInfo($"Text ({_step.Search}) is found at location ({X}, {Y})");
+            Logger.WriteInfo(string.Format(EngineResource.TargetNotFoundInLocation, X, Y));
+
+            // draw a rectangle
+            OpenCVService.DrawRedRectangle(filename, area.Left, area.Top, area.Width, area.Height);
 
             // run action if exists
             if (!string.IsNullOrEmpty(_step.Action))
             {
-                ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(_computer,
+                ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(Computer,
                                                                                           _step.Action,
                                                                                           _step.ActionArgument,
                                                                                           (X, Y),
-                                                                                          _logger);
+                                                                                          Logger);
 
                 actionExecutor?.Execute();
             }
@@ -72,7 +76,7 @@ namespace Engine
             // wait if exists
             if (_step.WaitingSecond > 0)
             {
-                _logger.WriteInfo($"TestStepForText2 waits for {_step.WaitingSecond} seconds");
+                Logger.WriteInfo(string.Format(EngineResource.TextStepWaitMessage, _step.WaitingSecond));
                 await Task.Delay(_step.WaitingSecond * 1000).ConfigureAwait(false);
             }
 

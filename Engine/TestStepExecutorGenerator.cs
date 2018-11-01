@@ -1,20 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using Abstractions;
+using ImageServiceProxy;
 
 namespace Engine
 {
     internal static class TestStepExecutorGenerator
     {
-        public static ITestStepExecutor Generate(ITestStep testStep, IComputer computer, System.Collections.Generic.IReadOnlyList<ICloudOCRService> imageSerivces, ILogger logger, IEngineConfig config)
+        private static IOpenCVSUtils _opencvService;
+
+        public static ITestStepExecutor Generate(ITestStep testStep,
+                                                 IComputer computer,
+                                                 IReadOnlyList<ICloudOCRService> ocrSerivces,
+                                                 ILogger logger,
+                                                 IEngineConfig config)
         {
             if (string.Equals(testStep.Target, "image", StringComparison.OrdinalIgnoreCase))
             {
-                return new TestStepForImage(imageSerivces, computer, testStep, logger, config);
+                return new TestStepForImage(ocrSerivces, computer, testStep, logger, config, OpenCVService);
             }
             else if (string.Equals(testStep.Target, "text", StringComparison.OrdinalIgnoreCase))
             {
-                return new TestStepForText(imageSerivces, computer, testStep, logger, config);
+                return new TestStepForText(ocrSerivces, computer, testStep, logger, config, OpenCVService);
             }
             else if (string.IsNullOrEmpty(testStep.Target))
             {
@@ -23,5 +30,7 @@ namespace Engine
 
             return null;
         }
+
+        private static IOpenCVSUtils OpenCVService => _opencvService ?? (_opencvService = new OpenCVService());
     }
 }

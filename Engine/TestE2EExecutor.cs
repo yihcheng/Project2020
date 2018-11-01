@@ -10,12 +10,12 @@ namespace Engine
     {
         private readonly ITestE2E _testE2E;
         private readonly IComputer _computer;
-        private readonly System.Collections.Generic.IReadOnlyList<ICloudOCRService> _ocrService;
+        private readonly IReadOnlyList<ICloudOCRService> _ocrService;
         private readonly ILogger _logger;
         private Process _targetProcess;
         private readonly IEngineConfig _engineConfig;
 
-        public TestE2EExecutor(ITestE2E testE2E, IComputer computer, System.Collections.Generic.IReadOnlyList<ICloudOCRService> ocrService, ILogger logger, IEngineConfig engineConfig)
+        public TestE2EExecutor(ITestE2E testE2E, IComputer computer, IReadOnlyList<ICloudOCRService> ocrService, ILogger logger, IEngineConfig engineConfig)
         {
             _testE2E = testE2E;
             _computer = computer;

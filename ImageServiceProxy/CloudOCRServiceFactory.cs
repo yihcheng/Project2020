@@ -7,7 +7,6 @@ namespace ImageServiceProxy
     public static class CloudOCRServiceFactory
     {
         private static ICloudOCRService _azureService;
-        private static IOpenCVSUtils _opencvService;
 
         public static ICloudOCRService Create(string providerName, string serviceUrl, string serviceKey, IComputer computer, ILogger logger, IEngineConfig config)
         {
@@ -21,7 +20,7 @@ namespace ImageServiceProxy
                 return CreateAzureOCR(serviceUrl, serviceKey, computer, logger, config);
             }
 
-            // Create other service here...
+            // Create other service here...l
 
             return null;
         }
@@ -31,15 +30,10 @@ namespace ImageServiceProxy
             if (_azureService == null)
             {
                 IOCRResultTextFinder textFinder = new AzureRecognizeTextFinder();
-                _azureService = new AzureOCRService(computer, textFinder, GetOpenCVService(), serviceUrl, serviceKey, logger, config);
+                _azureService = new AzureOCRService(computer, textFinder, serviceUrl, serviceKey, logger, config);
             }
 
             return _azureService;
-        }
-
-        private static IOpenCVSUtils GetOpenCVService()
-        {
-            return _opencvService ?? (_opencvService = new OpenCVService());
         }
     }
 }

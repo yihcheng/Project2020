@@ -8,19 +8,18 @@ namespace Engine
 {
     internal class TestStepForImage : TestStepForBase, ITestStepExecutor
     {
-        private readonly System.Collections.Generic.IReadOnlyList<ICloudOCRService> _ocrServices;
-        private readonly IComputer _computer;
         private readonly ITestStep _step;
-        private readonly ILogger _logger;
         private const string _targetKeyword = "image";
 
-        public TestStepForImage(System.Collections.Generic.IReadOnlyList<ICloudOCRService> ocrServices, IComputer computer, ITestStep action, ILogger logger, IEngineConfig config)
-            : base(config)
+        public TestStepForImage(IReadOnlyList<ICloudOCRService> ocrServices,
+                                IComputer computer,
+                                ITestStep action,
+                                ILogger logger,
+                                IEngineConfig config,
+                                IOpenCVSUtils openCVService)
+            : base(ocrServices, config, computer, logger, openCVService)
         {
-            _ocrServices = ocrServices;
-            _computer = computer;
             _step = action;
-            _logger = logger;
         }
 
         public async Task<bool> ExecuteAsync()
@@ -34,34 +33,33 @@ namespace Engine
 
             if (!File.Exists(_step.Search))
             {
-                _logger.WriteError($"\"{_step.Search}\" is not found");
+                Logger.WriteError(string.Format(EngineResource.SearchTextNotFound, _step.Search));
                 return false;
             }
 
-            string fullScreenFile = $".\\{GetArtifactFolderValue()}\\template-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
+            string fullScreenFile = $".\\{GetArtifactFolderValue()}\\FullScreen-{DateTime.Now.ToString("yyyyMMddHHmmss")}.jpg";
             FileUtility.EnsureParentFolder(fullScreenFile);
-            _computer.Screen.SaveFullScreenAsFile(fullScreenFile);
+            Computer.Screen.SaveFullScreenAsFile(fullScreenFile);
 
             byte[] searchFileBytes = File.ReadAllBytes(_step.Search);
             byte[] fullScreenFileBytes = File.ReadAllBytes(fullScreenFile);
-            (double confidence, int X, int Y)? result = null;
+            (double Confidence, int X, int Y, int Width, int Height)? templateMatchResult = null;
 
-            if (_ocrServices?.Count > 0)
+            if (OCRServices?.Count > 0)
             {
-                // TemplateMatch is identical in every image service
-                result = _ocrServices[0].OpenCVUtils.TemplateMatch(searchFileBytes, fullScreenFileBytes);
+                templateMatchResult = OpenCVService.TemplateMatch(searchFileBytes, fullScreenFileBytes);
             }
 
             // reject small confidence
-            if (result == null)
+            if (templateMatchResult == null)
             {
-                _logger.WriteError($"TemplateMatch result is null");
+                Logger.WriteError(EngineResource.TemplateMatchNullResult);
                 return false;
             }
 
-            if (result.Value.confidence < 0.9)
+            if (templateMatchResult.Value.Confidence < 0.9)
             {
-                _logger.WriteError($"templateMatch result confidence is less 0.9 (actual:{result.Value.confidence})");
+                Logger.WriteError(string.Format(EngineResource.TemplateMathResultIsLow, templateMatchResult.Value.Confidence));
                 return false;
             }
 
@@ -70,7 +68,10 @@ namespace Engine
 
             foreach (ScreenSearchArea area in _step.SearchArea)
             {
-                if (_computer.Screen.IsSearchAreaMatch(area, (result.Value.X, result.Value.Y)))
+                int centerX = templateMatchResult.Value.X + templateMatchResult.Value.Width / 2;
+                int centerY = templateMatchResult.Value.Y + templateMatchResult.Value.Height / 2;
+
+                if (Computer.Screen.IsSearchAreaMatch(area, (centerX, centerY)))
                 {
                     areaFound = true;
                 }
@@ -78,20 +79,27 @@ namespace Engine
 
             if (!areaFound)
             {
-                _logger.WriteError("Target is not found in selected search area");
+                Logger.WriteError(EngineResource.TargetNotFoundInSearchArea);
                 return false;
             }
 
-            _logger.WriteInfo($"Target is found at locaiton ({result.Value.X},{result.Value.Y})");
+            Logger.WriteInfo(string.Format(EngineResource.TargetNotFoundInLocation, templateMatchResult.Value.X, templateMatchResult.Value.Y));
+
+            // draw a rectangle
+            OpenCVService.DrawRedRectangle(fullScreenFile,
+                                           templateMatchResult.Value.X,
+                                           templateMatchResult.Value.Y,
+                                           templateMatchResult.Value.Width,
+                                           templateMatchResult.Value.Height);
 
             // run action if exists
             if (!string.IsNullOrEmpty(_step.Action))
             {
-                ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(_computer,
+                ITestActionExecutor actionExecutor = TestActionExecutorGenerator.Generate(Computer,
                                                                                           _step.Action,
                                                                                           _step.ActionArgument,
-                                                                                          (result.Value.X, result.Value.Y),
-                                                                                          _logger);
+                                                                                          (templateMatchResult.Value.X, templateMatchResult.Value.Y),
+                                                                                          Logger);
 
                 actionExecutor?.Execute();
             }
@@ -99,7 +107,7 @@ namespace Engine
             // wait if exists
             if (_step.WaitingSecond > 0)
             {
-                _logger.WriteInfo($"TestStepForImage waits for {_step.WaitingSecond} seconds");
+                Logger.WriteInfo(string.Format(EngineResource.ImageStepWaitMessage, _step.WaitingSecond));
                 await Task.Delay(_step.WaitingSecond * 1000).ConfigureAwait(false);
             }
 

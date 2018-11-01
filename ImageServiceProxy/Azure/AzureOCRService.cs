@@ -25,7 +25,6 @@ namespace ImageServiceProxy.Azure
 
         public AzureOCRService(IComputer computer,
                                IOCRResultTextFinder textFinder,
-                               IOpenCVSUtils opencvService,
                                string serviceUrl,
                                string serviceKey,
                                ILogger logger,
@@ -33,7 +32,6 @@ namespace ImageServiceProxy.Azure
         {
             _computer = computer;
             _textFinder = textFinder;
-            OpenCVUtils = opencvService;
             _azureOCRUrl = serviceUrl;
             _azureOCRKey = serviceKey;
             _logger = logger;
@@ -41,8 +39,6 @@ namespace ImageServiceProxy.Azure
         }
 
         public string ProviderName => _providerName;
-
-        public IOpenCVSUtils OpenCVUtils { get; }
 
         private async Task<string> GetOCRJsonResultAsync(string imageFile)
         {
@@ -141,11 +137,10 @@ namespace ImageServiceProxy.Azure
             {
                 if (_textFinder.TrySearchText(textToSearch, jsonResult, _computer.Screen, searchArea, out IScreenArea area))
                 {
-                    OpenCVUtils.DrawRedRectangle(imageFile, area.Left, area.Top, area.Width, area.Height);
                     return area;
                 }
             }
-          
+
             // write down info for debugging records
             try
             {
@@ -158,19 +153,12 @@ namespace ImageServiceProxy.Azure
 
                 // put message on image
                 string message = string.Format(ServiceResource.TextNotFoundInJsonResult, textToSearch, searchAreas, ocrFailFileName);
-                OpenCVUtils.PutText(imageFile, 1, _computer.Screen.Height / 2, message);
                 _logger.WriteError(message);
             }
-            catch
-            {
-            }
+            finally
+            { }
 
             return null;
-        }
-
-        public (double, int, int)? TemplateMatch(byte[] search, byte[] template)
-        {
-            return OpenCVUtils.TemplateMatch(search, template);
         }
     }
 }

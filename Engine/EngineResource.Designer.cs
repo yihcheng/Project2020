@@ -117,6 +117,15 @@ namespace Engine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TestStepForImage waits for {0} seconds.
+        /// </summary>
+        internal static string ImageStepWaitMessage {
+            get {
+                return ResourceManager.GetString("ImageStepWaitMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No input file. Engine stops..
         /// </summary>
         internal static string NoInputFile {
@@ -153,6 +162,51 @@ namespace Engine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is not found.
+        /// </summary>
+        internal static string SearchTextNotFound {
+            get {
+                return ResourceManager.GetString("SearchTextNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target is found at locaiton ({0},{1}).
+        /// </summary>
+        internal static string TargetNotFoundInLocation {
+            get {
+                return ResourceManager.GetString("TargetNotFoundInLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target is not found in selected search area.
+        /// </summary>
+        internal static string TargetNotFoundInSearchArea {
+            get {
+                return ResourceManager.GetString("TargetNotFoundInSearchArea", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TemplateMatch result is null.
+        /// </summary>
+        internal static string TemplateMatchNullResult {
+            get {
+                return ResourceManager.GetString("TemplateMatchNullResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to templateMatch result confidence is less 0.9 (actual:{0}).
+        /// </summary>
+        internal static string TemplateMathResultIsLow {
+            get {
+                return ResourceManager.GetString("TemplateMathResultIsLow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The program to test ({0}) is closed..
         /// </summary>
         internal static string TestProgramClosed {
@@ -185,6 +239,24 @@ namespace Engine {
         internal static string TestStepCountMessage {
             get {
                 return ResourceManager.GetString("TestStepCountMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find text &quot;{0}&quot; in json result at {1}. Json file = {2}..
+        /// </summary>
+        internal static string TextNotFoundInJsonResult {
+            get {
+                return ResourceManager.GetString("TextNotFoundInJsonResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TestStepForText waits for {0} seconds.
+        /// </summary>
+        internal static string TextStepWaitMessage {
+            get {
+                return ResourceManager.GetString("TextStepWaitMessage", resourceCulture);
             }
         }
     }

@@ -10,11 +10,11 @@ namespace Engine
     {
         private static ITestE2EReader _testE2EReader;
         private static IComputer _computer;
-        private static System.Collections.Generic.IReadOnlyList<ICloudOCRService> _ocrServices;
+        private static IReadOnlyList<ICloudOCRService> _ocrServices;
         private static IEngineConfig _engineConfig;
         private static ILogger _logger;
 
-        public Engine(ITestE2EReader reader, IComputer computer, System.Collections.Generic.IReadOnlyList<ICloudOCRService> ocrServices, IEngineConfig engineConfig, ILogger logger)
+        public Engine(ITestE2EReader reader, IComputer computer, IReadOnlyList<ICloudOCRService> ocrServices, IEngineConfig engineConfig, ILogger logger)
         {
             _testE2EReader = reader;
             _computer = computer;

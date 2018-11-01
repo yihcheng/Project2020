@@ -137,6 +137,9 @@
   <data name="FinalResultPass" xml:space="preserve">
     <value>The final test result is PASS!</value>
   </data>
+  <data name="ImageStepWaitMessage" xml:space="preserve">
+    <value>TestStepForImage waits for {0} seconds</value>
+  </data>
   <data name="NoInputFile" xml:space="preserve">
     <value>No input file. Engine stops.</value>
   </data>
@@ -149,6 +152,21 @@
   <data name="RunTestHeaderMessage" xml:space="preserve">
     <value>Running end-to-end test - {0}</value>
   </data>
+  <data name="SearchTextNotFound" xml:space="preserve">
+    <value>{0} is not found</value>
+  </data>
+  <data name="TargetNotFoundInLocation" xml:space="preserve">
+    <value>Target is found at locaiton ({0},{1})</value>
+  </data>
+  <data name="TargetNotFoundInSearchArea" xml:space="preserve">
+    <value>Target is not found in selected search area</value>
+  </data>
+  <data name="TemplateMatchNullResult" xml:space="preserve">
+    <value>TemplateMatch result is null</value>
+  </data>
+  <data name="TemplateMathResultIsLow" xml:space="preserve">
+    <value>templateMatch result confidence is less 0.9 (actual:{0})</value>
+  </data>
   <data name="TestProgramClosed" xml:space="preserve">
     <value>The program to test ({0}) is closed.</value>
   </data>
@@ -160,5 +178,11 @@
   </data>
   <data name="TestStepCountMessage" xml:space="preserve">
     <value>This test has {0} test step(s).</value>
+  </data>
+  <data name="TextNotFoundInJsonResult" xml:space="preserve">
+    <value>Cannot find text "{0}" in json result at {1}. Json file = {2}.</value>
+  </data>
+  <data name="TextStepWaitMessage" xml:space="preserve">
+    <value>TestStepForText waits for {0} seconds</value>
   </data>
 </root>

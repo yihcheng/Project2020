@@ -6,14 +6,13 @@ namespace Abstractions
     public interface ICloudOCRService
     {
         string ProviderName { get; }
-        IOpenCVSUtils OpenCVUtils { get; }
         Task<IScreenArea> GetOCRResultAsync(string imageFile, string textToSearch, IReadOnlyList<ScreenSearchArea> searchAreas);
     }
 
     public interface IOpenCVSUtils
     {
-        (double, int, int)? TemplateMatch(byte[] search, byte[] template);
-        void DrawRedRectangle(string imageFile, int X, int Y, int width, int height);
-        void PutText(string imageFile, int X, int Y, string message);
+        (double Confidence, int X, int Y, int Width, int Height)? TemplateMatch(byte[] search, byte[] template);
+        void DrawRedRectangle(string ImageFile, int X, int Y, int Width, int Height);
+        void PutText(string ImageFile, int X, int Y, string Message);
     }
 }

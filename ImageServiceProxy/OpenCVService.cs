@@ -15,8 +15,8 @@ namespace ImageServiceProxy
         /// </summary>
         /// <param name="search"></param>
         /// <param name="template"></param>
-        /// <returns>(double, int, int) = confidence and location X, Y</returns>
-        public (double, int, int)? TemplateMatch(byte[] search, byte[] template)
+        /// <returns>(double, int, int, int, int) = confidence and top-left corner X,Y, width, and height</returns>
+        public (double Confidence, int X, int Y, int Width, int Height)? TemplateMatch(byte[] search, byte[] template)
         {
             if (search == null
                 || template == null
@@ -47,15 +47,12 @@ namespace ImageServiceProxy
                 gtpl.Dispose();
             }
 
-            int X = maxloc.X + (searchImageWidth / 2);
-            int Y = maxloc.Y + (searchImageHeight / 2);
-
             if (maxloc == default(Point))
             {
                 return null;
             }
 
-            return (maxval, X, Y);
+            return (maxval, maxloc.X, maxloc.Y, searchImageWidth, searchImageHeight);
         }
 
         public void DrawRedRectangle(string imageFile, int X, int Y, int width, int height)
