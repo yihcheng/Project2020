@@ -1,0 +1,50 @@
+{
+  "FullName": "Notepad open file and verify content test",
+  "ShortName": "notepadopenfiletest",
+  "LastUpdated": "2018-07-01 13:14",
+  "Skip": "false",
+  "ProgramToLaunch": "notepad.exe",
+  "Steps": [
+    {
+      "Target": "text",
+      "Search": "File",
+      "ScreenArea": ["top-left"],
+      "Action": "mouse.click",
+      "Waiting": "1",
+      "FailureReport": "true",
+	  "Retry": "1"
+    },
+    {
+      "Target": "text",
+      "Search": "Open...",
+      "ScreenArea": ["top-left"],
+      "Action": "mouse.click",
+      "Waiting": "1",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": [],
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "c:\\temp\\test1.txt",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "Open",
+      "ScreenArea": ["center"],
+      "Action": "mouse.click",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "This is awesome",
+      "ScreenArea": ["left-top"],
+      "Waiting": "2",
+      "FailureReport": "true"
+    }
+  ]
+}

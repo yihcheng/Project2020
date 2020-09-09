@@ -1,0 +1,100 @@
+{
+  "FullName": "Hotmail Sign in test",
+  "ShortName": "hotmailsignin",
+  "LastUpdated": "2018-07-01 13:14",
+  "Skip": "false",
+  "ProgramToLaunch": "microsoft-edge:",
+  "Steps": [
+    {
+      "Target": "text",
+      "Search": "enter web address",
+      "ScreenArea": ["top-left"],
+      "Action": "mouse.click",
+      "Waiting": "1",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": [],
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "www.hotmail.com",
+      "Waiting": "1",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": [],
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "{Enter}",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "Sign in",
+      "ScreenArea":[ "center"],
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "Microsoft Account",
+      "ScreenArea": ["top"],
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "phone, or Skype",
+      "ScreenArea": ["center"],
+      "Action": "mouse.click",
+      "Waiting": "1",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": [],
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "xxxxxxx@hotmail.com",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "Next",
+      "ScreenArea": ["center"],
+      "Action": "mouse.click",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": [],
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "xxxxxxx",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "image",
+      "Search": ".\\images\\signin.jpg",
+      "ScreenArea": ["center"],
+      "Action": "mouse.click",
+      "Waiting": "3",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "Outlook Mail",
+      "ScreenArea": ["top-left"],
+      "Waiting": "3",
+      "FailureReport": "true"
+    }
+  ]
+}

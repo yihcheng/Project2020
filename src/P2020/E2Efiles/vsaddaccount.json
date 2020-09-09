@@ -1,0 +1,83 @@
+﻿{
+  "FullName": "Add an account in Visual Studio",
+  "ShortName": "vsaddaccount",
+  "LastUpdated": "2018-07-01 13:14",
+  "Skip": "false",
+  "ProgramToLaunch": "devenv.exe",
+  "Steps": [
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": "",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "[ctrl+{F4}]",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "File",
+      "ScreenArea": "top-left",
+      "Action": "mouse.click",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "Account Settings...",
+      "ScreenArea": "top-left",
+      "Action": "mouse.click",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "Add an account...",
+      "ScreenArea": "center",
+      "Action": "mouse.click",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": ", phone, or Skype",
+      "ScreenArea": "center",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "xxxxxxx@hotmail.com",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "text",
+      "Search": "Next",
+      "ScreenArea": "center",
+      "Action": "mouse.click",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "",
+      "Search": "",
+      "ScreenArea": "",
+      "Action": "keyboard.sendkeys",
+      "ActionArgument": "xxxxxxxxxxx",
+      "Waiting": "2",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "image",
+      "Search": ".\\images\\SignIn.jpg",
+      "ScreenArea": "center",
+      "Action": "mouse.click",
+      "Waiting": "5",
+      "FailureReport": "true"
+    },
+    {
+      "Target": "image",
+      "Search": ".\\images\\MicrosoftLogo.jpg",
+      "ScreenArea": "center",
+      "Waiting": "1",
+      "FailureReport": "true"
+    }
+  ]
+}
